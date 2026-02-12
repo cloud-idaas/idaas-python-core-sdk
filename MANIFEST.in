@@ -1,0 +1,25 @@
+# Include essential files
+include README.md
+include LICENSE
+include pyproject.toml
+
+# Include all Python files in the cloud_idaas package
+recursive-include cloud_idaas *.py
+
+# Exclude development and build artifacts
+exclude .gitignore
+exclude pytest.ini
+exclude uv.lock
+exclude MANIFEST.in
+recursive-exclude tests *
+recursive-exclude samples *
+recursive-exclude .github *
+recursive-exclude .vscode *
+recursive-exclude .ruff_cache *
+recursive-exclude ENV *
+recursive-exclude build *
+recursive-exclude dist *
+recursive-exclude *.egg-info *
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .DS_Store

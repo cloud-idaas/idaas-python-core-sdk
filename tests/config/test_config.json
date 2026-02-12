@@ -1,0 +1,18 @@
+{
+    "idaasInstanceId": "idaas_xzzcg5t3eip7exxxxxx",
+    "clientId": "app_nfznxxhyvf2l7qhx752xxxxxx",
+    "issuer": "https://idaas.example.com/api/v2/iauths_system/oauth2",
+    "tokenEndpoint": "https://idaas.example.com/api/v2/iauths_system/oauth2/token",
+    "scope": "urn:cloud:idaas:pam|cloud_account_role:obtain_access_credential",
+    "developerApiEndpoint": "idaas.example.com",
+    "authnConfiguration": {
+        "authenticationSubject": "CLIENT",
+        "authnMethod": "CLIENT_SECRET_POST",
+        "clientSecretEnvVarName": "IDAAS_CLIENT_SECRET"
+    },
+    "httpConfiguration": {
+        "connectTimeout": 5000,
+        "readTimeout": 10000,
+        "unsafeIgnoreSslCert": false
+    }
+}
