@@ -2,7 +2,7 @@
 Unit tests for IDaaS Python SDK exceptions
 """
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     CacheException,
     ClientException,
     ConcurrentOperationException,

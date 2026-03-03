@@ -7,6 +7,7 @@ file operations, and other common utilities.
 
 from cloud_idaas.core.constants import TokenAuthnMethod
 from cloud_idaas.core.util.browser_util import BrowserUtil
+from cloud_idaas.core.util.config_reader import ConfigReader
 from cloud_idaas.core.util.exception_analyzer import ExceptionAnalyzer
 from cloud_idaas.core.util.file_util import FileUtil
 from cloud_idaas.core.util.json_util import JSONUtil
@@ -25,4 +26,5 @@ __all__ = [
     "PkiUtil",
     "BrowserUtil",
     "TokenAuthnMethod",
+    "ConfigReader",
 ]

@@ -7,8 +7,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from cloud_idaas import CredentialException, IDaaSTokenResponse, StaleValueBehavior
-from cloud_idaas.core import TokenAuthnMethod
+from cloud_idaas.core import CredentialException, IDaaSTokenResponse, StaleValueBehavior, TokenAuthnMethod
 from cloud_idaas.core.implementation.idaas_machine_credential_provider import (
     IDaaSMachineCredentialProvider,
 )

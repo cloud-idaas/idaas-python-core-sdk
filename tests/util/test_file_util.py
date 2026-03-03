@@ -6,7 +6,7 @@ import os
 import tempfile
 import unittest
 
-from cloud_idaas import FileUtil
+from cloud_idaas.core import FileUtil
 
 
 class TestFileUtil(unittest.TestCase):

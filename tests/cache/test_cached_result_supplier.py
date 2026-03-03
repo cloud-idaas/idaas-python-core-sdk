@@ -7,7 +7,7 @@ import time
 import unittest
 from datetime import datetime, timedelta, timezone
 
-from cloud_idaas import CacheException, ConcurrentOperationException
+from cloud_idaas.core import CacheException, ConcurrentOperationException
 from cloud_idaas.core.cache.cached_result_supplier import CachedResultSupplier
 from cloud_idaas.core.cache.refresh_result import RefreshResult
 from cloud_idaas.core.cache.stale_value_behavior import StaleValueBehavior
@@ -103,7 +103,7 @@ class TestCachedResultSupplier(unittest.TestCase):
 
     def test_strict_stale_value_behavior(self):
         """Test STRICT stale value behavior (raises exception on refresh failure)"""
-        from cloud_idaas import CacheException
+        from cloud_idaas.core import CacheException
 
         def failing_supplier():
             raise Exception("Refresh failed")
@@ -325,7 +325,7 @@ class TestCachedResultSupplierConcurrency(unittest.TestCase):
         # Create a custom supplier with shorter timeout for testing
         from cloud_idaas.core.cache.cached_result_supplier import BLOCKING_REFRESH_MAX_WAIT
 
-        original_timeout = BLOCKING_REFRESH_MAX_WAIT.total_seconds()
+        BLOCKING_REFRESH_MAX_WAIT.total_seconds()
 
         supplier = CachedResultSupplier(
             value_supplier=blocking_supplier, prefetch_strategy=OneCallerBlocksPrefetchStrategy(), clock=custom_clock
@@ -335,7 +335,6 @@ class TestCachedResultSupplierConcurrency(unittest.TestCase):
         supplier._cached_value = RefreshResult("initial", datetime(2024, 1, 1, 11, 0, 0), None)
 
         results = []
-        threads = []
 
         def get_value():
             results.append(supplier.get())
@@ -359,7 +358,6 @@ class TestCachedResultSupplierConcurrency(unittest.TestCase):
     def test_concurrent_prefetch_with_one_caller_blocks(self):
         """Test prefetch behavior with concurrent calls using OneCallerBlocks strategy"""
         call_count = [0]
-        prefetch_count = [0]
         current_time = [datetime(2024, 1, 1, 12, 0, 0)]
 
         def custom_clock():
@@ -1018,7 +1016,7 @@ class TestCachedResultSupplierJitterBehavior(unittest.TestCase):
 
             # Check for variation (not all values should be the same)
             # With random jitter, we expect some variation
-            unique_values = set(stale_times)
+            set(stale_times)
             # Allow for possibility of same random values, but likely to have variation
             # This is a probabilistic test
         finally:
@@ -1194,7 +1192,7 @@ class TestCachedResultSupplierPrefetchScenarios(unittest.TestCase):
         )
 
         # Call multiple times with time advancing
-        for i in range(5):
+        for _ in range(5):
             supplier.get()
             current_time[0] = current_time[0] + timedelta(hours=1)
 
@@ -1375,7 +1373,7 @@ class TestCachedResultSupplierLockBehavior(unittest.TestCase):
             def refresh_thread():
                 try:
                     supplier.get()
-                except:
+                except Exception:
                     pass
 
             thread = threading.Thread(target=refresh_thread)

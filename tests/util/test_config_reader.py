@@ -6,8 +6,7 @@ import os
 import tempfile
 import unittest
 
-from cloud_idaas import ConfigException
-from cloud_idaas.core import ConfigPathConstants
+from cloud_idaas.core import ConfigException, ConfigPathConstants
 from cloud_idaas.core.util.config_reader import ConfigReader
 
 

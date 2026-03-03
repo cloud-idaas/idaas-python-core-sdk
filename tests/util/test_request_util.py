@@ -5,7 +5,7 @@ Tests for RequestUtil class
 import unittest
 from datetime import datetime, timezone
 
-from cloud_idaas import CredentialException, RequestUtil
+from cloud_idaas.core import CredentialException, RequestUtil
 
 
 class TestRequestUtil(unittest.TestCase):

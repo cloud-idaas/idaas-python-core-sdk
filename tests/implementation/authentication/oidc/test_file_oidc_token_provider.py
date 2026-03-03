@@ -9,13 +9,17 @@ from unittest.mock import patch
 
 import pytest
 
-from cloud_idaas import CredentialException
+from cloud_idaas.core import CredentialException
 from cloud_idaas.core.implementation.authentication.oidc.file_oidc_token_provider import (
     FileOidcTokenProvider,
 )
 
 # Sample JWT token with expiration claim
-SAMPLE_JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjk5OTk5OTk5OTl9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+SAMPLE_JWT_TOKEN = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+    "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjk5OTk5OTk5OTl9."
+    "SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+)
 
 
 class TestFileOidcTokenProvider:
@@ -80,7 +84,7 @@ class TestFileOidcTokenProvider:
         # Token expiring in 5 minutes
         from datetime import datetime, timedelta
 
-        exp_time = int((datetime.now(timezone.utc) + timedelta(minutes=5)).timestamp())
+        int((datetime.now(timezone.utc) + timedelta(minutes=5)).timestamp())
         soon_to_expire_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjtleHBlcH0=.invalid"
         new_token = SAMPLE_JWT_TOKEN
 
@@ -88,8 +92,8 @@ class TestFileOidcTokenProvider:
 
         provider = FileOidcTokenProvider("/path/to/token")
 
-        token1 = provider.get_oidc_token()
-        token2 = provider.get_oidc_token()
+        provider.get_oidc_token()
+        provider.get_oidc_token()
 
         # Second call should read again because token is expiring soon
         assert mock_read_file.call_count >= 1

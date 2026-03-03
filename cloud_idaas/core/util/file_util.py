@@ -3,7 +3,7 @@ IDaaS Python SDK - File Utility
 
 This module provides file reading and writing utilities.
 """
-
+import logging
 import os
 from pathlib import Path
 from typing import Optional
@@ -35,7 +35,7 @@ class FileUtil:
             with open(file_path, encoding="utf-8") as f:
                 return f.read()
         except OSError as e:
-            print(f"Error reading file: {e}")
+            logging.error(f"Error reading file: {e}")
             return None
 
     @staticmethod
@@ -55,10 +55,10 @@ class FileUtil:
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.touch()
             except OSError as e:
-                print(f"Error creating file: {e}")
+                logging.error(f"Error creating file: {e}")
 
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
         except OSError as e:
-            print(f"Error writing file: {e}")
+            logging.error(f"Error writing file: {e}")

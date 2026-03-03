@@ -4,7 +4,7 @@ Tests for PkiUtil class
 
 import unittest
 
-from cloud_idaas import PkiUtil
+from cloud_idaas.core import PkiUtil
 
 
 class TestPkiUtil(unittest.TestCase):

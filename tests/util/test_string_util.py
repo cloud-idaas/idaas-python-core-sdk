@@ -4,7 +4,7 @@ Tests for StringUtil class
 
 import unittest
 
-from cloud_idaas import StringUtil
+from cloud_idaas.core import StringUtil
 
 
 class TestStringUtil(unittest.TestCase):

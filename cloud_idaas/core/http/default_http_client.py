@@ -3,7 +3,8 @@ IDaaS Python SDK - Default HTTP Client Implementation
 """
 
 import socket
-from typing import Dict, Optional
+import ssl
+from typing import Optional
 from urllib.error import URLError
 from urllib.parse import urlencode
 
@@ -37,7 +38,7 @@ class DefaultHttpClient(HttpClient):
         self._http = urllib3.PoolManager(
             timeout=urllib3.Timeout(connect=self._connect_timeout, read=self._read_timeout),
             retries=False,
-            cert_reqs="CERT_REQUIRED",
+            cert_reqs=ssl.CERT_REQUIRED,
         )
 
     def send(self, request: HttpRequest) -> HttpResponse:
@@ -61,19 +62,19 @@ class DefaultHttpClient(HttpClient):
 
         except urllib3.exceptions.TimeoutError as e:
             if "connect" in str(e).lower():
-                raise ClientException(ErrorCode.CONNECT_TIME_OUT.value, "Connect Timeout: " + str(e))
+                raise ClientException(ErrorCode.CONNECT_TIME_OUT.value, "Connect Timeout: " + str(e)) from e
             else:
-                raise ServerException(ErrorCode.READ_TIME_OUT.value, "Read Timeout: " + str(e))
+                raise ServerException(ErrorCode.READ_TIME_OUT.value, "Read Timeout: " + str(e)) from e
         except urllib3.exceptions.MaxRetryError as e:
             if isinstance(e.reason, URLError):
-                raise HttpException("Connect Failed: " + str(e.reason))
-            raise HttpException("HTTP Request Failed: " + str(e))
+                raise HttpException("Connect Failed: " + str(e.reason)) from e
+            raise HttpException("HTTP Request Failed: " + str(e)) from e
         except urllib3.exceptions.HTTPError as e:
-            raise HttpException("HTTP Error: " + str(e))
-        except socket.timeout:
-            raise ServerException(ErrorCode.READ_TIME_OUT.value, "Read Timeout")
+            raise HttpException("HTTP Error: " + str(e)) from e
+        except socket.timeout as e:
+            raise ServerException(ErrorCode.READ_TIME_OUT.value, "Read Timeout") from e
 
-    def _build_headers(self, request: HttpRequest) -> Dict[str, str]:
+    def _build_headers(self, request: HttpRequest) -> dict[str, str]:
         """
         Build request headers.
 
@@ -141,14 +142,14 @@ class DefaultHttpClient(HttpClient):
             try:
                 err_response = self._parse_error_response(body)
                 raise ClientException(err_response.error, err_response.error_description, err_response.request_id)
-            except (ValueError, KeyError):
-                raise ClientException(str(status_code), body)
+            except (ValueError, KeyError) as e:
+                raise ClientException(str(status_code), body) from e
         else:
             try:
                 err_response = self._parse_error_response(body)
                 raise ServerException(err_response.error, err_response.error_description, err_response.request_id)
-            except (ValueError, KeyError):
-                raise ServerException(str(status_code), body)
+            except (ValueError, KeyError) as e:
+                raise ServerException(str(status_code), body) from e
 
     def _parse_error_response(self, body: str) -> ErrResponse:
         """

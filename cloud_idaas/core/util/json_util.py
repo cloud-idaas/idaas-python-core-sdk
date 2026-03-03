@@ -5,7 +5,7 @@ This module provides JSON serialization and deserialization utilities.
 """
 
 import json
-from typing import Any, Dict, List, Type, TypeVar
+from typing import Any, TypeVar
 
 T = TypeVar("T")
 
@@ -42,7 +42,7 @@ class JSONUtil:
         return JSONUtil.to_json_string(obj).encode("utf-8")
 
     @staticmethod
-    def parse_object(json_string: str, clazz: Type[T]) -> T:
+    def parse_object(json_string: str, clazz: type[T]) -> T:
         """
         Parse JSON string to an object of specified class.
 
@@ -66,7 +66,7 @@ class JSONUtil:
             # For simple types like dict, return as-is
             return data
         except (json.JSONDecodeError, ValueError) as e:
-            raise ValueError(f"Failed to parse JSON: {e}")
+            raise ValueError(f"Failed to parse JSON: {e}") from e
 
     @staticmethod
     def parse_object_with_type(json_string: str, target_type: Any) -> Any:
@@ -86,10 +86,10 @@ class JSONUtil:
         try:
             return json.loads(json_string)
         except (json.JSONDecodeError, ValueError) as e:
-            raise ValueError(f"Failed to parse JSON: {e}")
+            raise ValueError(f"Failed to parse JSON: {e}") from e
 
     @staticmethod
-    def parse_array(json_string: str, element_type: Type[T]) -> List[T]:
+    def parse_array(json_string: str, element_type: type[T]) -> list[T]:
         """
         Parse JSON string to a list of objects.
 
@@ -109,10 +109,10 @@ class JSONUtil:
                 return data
             raise ValueError("JSON is not an array")
         except (json.JSONDecodeError, ValueError) as e:
-            raise ValueError(f"Failed to parse JSON array: {e}")
+            raise ValueError(f"Failed to parse JSON array: {e}") from e
 
     @staticmethod
-    def parse_map(json_string: str, key_type: Type, value_type: Type) -> Dict[Any, Any]:
+    def parse_map(json_string: str, key_type: type, value_type: type) -> dict[Any, Any]:
         """
         Parse JSON string to a map.
 
@@ -133,4 +133,4 @@ class JSONUtil:
                 return data
             raise ValueError("JSON is not an object")
         except (json.JSONDecodeError, ValueError) as e:
-            raise ValueError(f"Failed to parse JSON map: {e}")
+            raise ValueError(f"Failed to parse JSON map: {e}") from e

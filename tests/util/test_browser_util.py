@@ -5,7 +5,7 @@ Tests for BrowserUtil class
 import unittest
 from unittest.mock import patch
 
-from cloud_idaas import BrowserUtil
+from cloud_idaas.core import BrowserUtil
 
 
 class TestBrowserUtil(unittest.TestCase):

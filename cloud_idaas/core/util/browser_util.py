@@ -33,10 +33,10 @@ class BrowserUtil:
             if not parsed.scheme or not parsed.netloc:
                 raise ValueError("Invalid URI format")
         except Exception as e:
-            raise OSError(f"Invalid URI: {e}")
+            raise OSError(f"Invalid URI: {e}") from e
 
         try:
             # Open in the browser
             webbrowser.open(uri_str)
         except Exception as e:
-            raise OSError(f"Failed to open browser: {e}")
+            raise OSError(f"Failed to open browser: {e}") from e

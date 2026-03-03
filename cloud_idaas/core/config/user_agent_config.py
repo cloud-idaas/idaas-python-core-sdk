@@ -18,7 +18,7 @@ class UserAgentConfig:
         """
         Initialize the user agent message.
         """
-        from cloud_idaas import __version__
+        from cloud_idaas.core import __version__
 
         python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
         os_name = platform.system()

@@ -2,7 +2,7 @@
 Unit tests for StaticOidcTokenProvider
 """
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     StaticOidcTokenProvider,
 )
 

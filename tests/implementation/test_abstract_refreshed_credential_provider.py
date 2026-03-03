@@ -4,7 +4,7 @@ Unit tests for AbstractRefreshedCredentialProvider
 
 import pytest
 
-from cloud_idaas import AbstractRefreshedCredentialProvider, RefreshResult, StaleValueBehavior
+from cloud_idaas.core import AbstractRefreshedCredentialProvider, RefreshResult, StaleValueBehavior
 
 
 class MockRefreshedCredentialProvider(AbstractRefreshedCredentialProvider[str]):
@@ -60,7 +60,7 @@ class TestAbstractRefreshedCredentialProvider:
     def test_context_manager_with_exception(self):
         """Test context manager handles exceptions properly."""
         with pytest.raises(ValueError):
-            with MockRefreshedCredentialProvider() as provider:
+            with MockRefreshedCredentialProvider():
                 raise ValueError("Test exception")
 
     def test_refresh_credential_not_implemented(self):

@@ -6,7 +6,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from cloud_idaas import IDaaSCredential
+from cloud_idaas.core import IDaaSCredential
 from cloud_idaas.core.provider import IDaaSCredentialProvider
 
 

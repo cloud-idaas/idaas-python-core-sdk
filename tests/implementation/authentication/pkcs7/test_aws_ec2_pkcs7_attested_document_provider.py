@@ -4,7 +4,7 @@ Unit tests for AwsEc2Pkcs7AttestedDocumentProvider
 
 import pytest
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     AwsEc2Pkcs7AttestedDocumentProvider,
     CredentialException,
 )

@@ -6,7 +6,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     AlibabaCloudEcsAttestedDocumentProvider,
     AlibabaCloudEcsAttestedDocumentProviderBuilder,
     StaleValueBehavior,

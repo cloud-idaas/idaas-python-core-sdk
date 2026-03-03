@@ -50,11 +50,11 @@ class IDaaSCredentialProviderFactory:
             cls._validate_client_config(cls._idaas_client_config)
             cls._validate_http_config(cls._idaas_client_config.http_configuration)
             cls._initialized = True
-        except Exception:
+        except Exception as e:
             cls._logger.error("IDaaS Credential Provider Factory init failed.", exc_info=True)
             raise ConfigException(
                 ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT, "IDaaS Credential Provider Factory init failed."
-            )
+            ) from e
 
         cls._init_credential_provider()
 

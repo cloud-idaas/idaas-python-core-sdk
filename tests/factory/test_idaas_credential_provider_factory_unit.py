@@ -6,8 +6,15 @@ import os
 import unittest
 from unittest.mock import Mock, patch
 
-from cloud_idaas import ConfigException, HttpConfiguration, IDaaSClientConfig, IdentityAuthenticationConfiguration
-from cloud_idaas.core import AuthenticationIdentityEnum, ErrorCode, TokenAuthnMethod
+from cloud_idaas.core import (
+    AuthenticationIdentityEnum,
+    ConfigException,
+    ErrorCode,
+    HttpConfiguration,
+    IDaaSClientConfig,
+    IdentityAuthenticationConfiguration,
+    TokenAuthnMethod,
+)
 from cloud_idaas.core.factory.idaas_credential_provider_factory import IDaaSCredentialProviderFactory
 from cloud_idaas.core.provider import IDaaSCredentialProvider
 
@@ -410,7 +417,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
             mock_builder.client_secret_supplier.return_value = mock_builder
             mock_builder.build.return_value = Mock()
 
-            provider = IDaaSCredentialProviderFactory._create_credential_provider("test-scope")
+            IDaaSCredentialProviderFactory._create_credential_provider("test-scope")
 
             # Verify the builder was called with correct parameters
             mock_builder_class.assert_called_once()
@@ -449,7 +456,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
             mock_builder.client_secret_supplier.return_value = mock_builder
             mock_builder.build.return_value = Mock()
 
-            provider = IDaaSCredentialProviderFactory._create_credential_provider("test-scope")
+            IDaaSCredentialProviderFactory._create_credential_provider("test-scope")
 
             # Verify the builder was called with correct parameters
             mock_builder_class.assert_called_once()

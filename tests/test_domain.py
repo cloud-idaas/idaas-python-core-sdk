@@ -2,7 +2,7 @@
 Unit tests for IDaaS Python SDK domain objects
 """
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     DeviceCodeResponse,
     ErrResponse,
 )
@@ -166,7 +166,7 @@ class TestErrResponse:
         err = ErrResponse("invalid_request", "The request is invalid", "req-123")
         assert err != "invalid_request"
         assert err != 123
-        assert err != None
+        assert err is not None
 
     def test_hash_equal(self):
         """Test __hash__ method with equal responses"""
@@ -543,7 +543,7 @@ class TestDeviceCodeResponse:
 
         assert response != "device-123"
         assert response != 123
-        assert response != None
+        assert response is not None
 
     def test_hash_equal(self):
         """Test __hash__ method with equal responses"""

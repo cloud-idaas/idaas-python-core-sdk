@@ -4,7 +4,7 @@ Tests for ContentType enum
 
 import unittest
 
-from cloud_idaas import ContentType
+from cloud_idaas.core import ContentType
 
 
 class TestContentType(unittest.TestCase):

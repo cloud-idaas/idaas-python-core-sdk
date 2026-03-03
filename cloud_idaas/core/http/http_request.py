@@ -2,7 +2,7 @@
 IDaaS Python SDK - HTTP Request
 """
 
-from typing import Dict, List, Optional
+from typing import Optional
 
 from cloud_idaas.core.http.content_type import ContentType
 from cloud_idaas.core.http.http_method import HttpMethod
@@ -16,9 +16,9 @@ class HttpRequest:
     def __init__(self):
         self._method: Optional[HttpMethod] = None
         self._url: Optional[str] = None
-        self._headers: Optional[Dict[str, List[str]]] = None
+        self._headers: Optional[dict[str, list[str]]] = None
         self._body: Optional[str] = None
-        self._form_body: Optional[Dict[str, List[str]]] = None
+        self._form_body: Optional[dict[str, list[str]]] = None
         self._content_type: Optional[ContentType] = None
 
     @property
@@ -38,11 +38,11 @@ class HttpRequest:
         self._url = value
 
     @property
-    def headers(self) -> Optional[Dict[str, List[str]]]:
+    def headers(self) -> Optional[dict[str, list[str]]]:
         return self._headers
 
     @headers.setter
-    def headers(self, value: Dict[str, List[str]]):
+    def headers(self, value: dict[str, list[str]]):
         self._headers = value
 
     @property
@@ -54,11 +54,11 @@ class HttpRequest:
         self._body = value
 
     @property
-    def form_body(self) -> Optional[Dict[str, List[str]]]:
+    def form_body(self) -> Optional[dict[str, list[str]]]:
         return self._form_body
 
     @form_body.setter
-    def form_body(self, value: Dict[str, List[str]]):
+    def form_body(self, value: dict[str, list[str]]):
         self._form_body = value
 
     @property
@@ -141,9 +141,9 @@ class Builder:
     def __init__(self):
         self._method: Optional[HttpMethod] = None
         self._url: Optional[str] = None
-        self._headers: Optional[Dict[str, List[str]]] = None
+        self._headers: Optional[dict[str, list[str]]] = None
         self._body: Optional[str] = None
-        self._form_body: Optional[Dict[str, List[str]]] = None
+        self._form_body: Optional[dict[str, list[str]]] = None
         self._content_type: Optional[ContentType] = None
 
     def http_method(self, method: HttpMethod) -> "Builder":
@@ -172,7 +172,7 @@ class Builder:
         self._url = url
         return self
 
-    def headers(self, headers: Dict[str, List[str]]) -> "Builder":
+    def headers(self, headers: dict[str, list[str]]) -> "Builder":
         """
         Set the headers.
 
@@ -198,7 +198,7 @@ class Builder:
         self._body = body
         return self
 
-    def form_body(self, form_body: Dict[str, List[str]]) -> "Builder":
+    def form_body(self, form_body: dict[str, list[str]]) -> "Builder":
         """
         Set the form body.
 

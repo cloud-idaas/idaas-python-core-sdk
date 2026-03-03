@@ -76,8 +76,8 @@ class PkiUtil:
                 return serialization.load_der_private_key(
                     PkiUtil._wrap_rsa_in_pkcs8(encoded), password=None, backend=default_backend()
                 )
-            except Exception:
-                raise ValueError("Failed to parse PKCS#8 private key")
+            except Exception as e:
+                raise ValueError("Failed to parse PKCS#8 private key") from e
 
     @staticmethod
     def _parse_pkcs1_rsa_private_key(pem_content: str):

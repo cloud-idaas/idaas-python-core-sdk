@@ -138,7 +138,7 @@ class TestNonBlockingPrefetchStrategy(unittest.TestCase):
         strategies = []
 
         # Start more prefetches than MAX_CONCURRENT_REFRESHES
-        for i in range(MAX_CONCURRENT_REFRESHES + 5):
+        for _ in range(MAX_CONCURRENT_REFRESHES + 5):
             strategy = NonBlockingPrefetchStrategy()
             strategies.append(strategy)
             strategy.prefetch(blocking_updater)

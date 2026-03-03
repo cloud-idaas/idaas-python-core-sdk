@@ -4,7 +4,7 @@ Tests for UserAgentConfig class
 
 import unittest
 
-from cloud_idaas.core.config.user_agent_config import UserAgentConfig
+from cloud_idaas.core import UserAgentConfig
 
 
 class TestUserAgentConfig(unittest.TestCase):

@@ -8,7 +8,7 @@ import sys
 # Add the project root to the path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from cloud_idaas import StringUtil
+from cloud_idaas.core import StringUtil
 from cloud_idaas.core.config.idaas_client_config import IDaaSClientConfig
 
 
@@ -76,7 +76,7 @@ def test_idaas_client_config_from_dict():
     assert config.http_configuration is not None, "Failed: http_configuration is None"
     assert config.http_configuration.connect_timeout == 5000, "Failed: connect_timeout"
     assert config.http_configuration.read_timeout == 10000, "Failed: read_timeout"
-    assert config.http_configuration.unsafe_ignore_ssl_cert == False, "Failed: unsafe_ignore_ssl_cert"
+    assert not config.http_configuration.unsafe_ignore_ssl_cert, "Failed: unsafe_ignore_ssl_cert"
 
     print("  All IDaaSClientConfig parsing tests passed!\n")
 

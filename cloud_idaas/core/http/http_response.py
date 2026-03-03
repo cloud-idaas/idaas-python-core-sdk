@@ -2,7 +2,7 @@
 IDaaS Python SDK - HTTP Response
 """
 
-from typing import Dict, Optional
+from typing import Optional
 
 
 class HttpResponse:
@@ -12,7 +12,7 @@ class HttpResponse:
 
     def __init__(self, status_code: int = None, body: str = None):
         self._status_code: Optional[int] = status_code
-        self._headers: Optional[Dict[str, str]] = None
+        self._headers: Optional[dict[str, str]] = None
         self._body: Optional[str] = body
 
     @property
@@ -24,11 +24,11 @@ class HttpResponse:
         self._status_code = value
 
     @property
-    def headers(self) -> Optional[Dict[str, str]]:
+    def headers(self) -> Optional[dict[str, str]]:
         return self._headers
 
     @headers.setter
-    def headers(self, value: Dict[str, str]):
+    def headers(self, value: dict[str, str]):
         self._headers = value
 
     @property

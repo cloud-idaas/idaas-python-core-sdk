@@ -4,7 +4,7 @@ Tests for HttpClient interface
 
 import unittest
 
-from cloud_idaas import HttpClient, HttpRequest, HttpResponse
+from cloud_idaas.core import HttpClient, HttpRequest, HttpResponse
 
 
 class TestHttpClient(unittest.TestCase):

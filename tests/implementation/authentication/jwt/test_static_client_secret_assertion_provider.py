@@ -4,7 +4,7 @@ Unit tests for StaticClientSecretAssertionProvider
 
 import pytest
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     CredentialException,
     StaticClientSecretAssertionProvider,
 )

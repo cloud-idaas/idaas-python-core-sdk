@@ -4,8 +4,15 @@ Tests for IDaaSCredentialProviderFactory class
 
 import unittest
 
-from cloud_idaas import ConfigException, HttpConfiguration, IDaaSClientConfig, IdentityAuthenticationConfiguration
-from cloud_idaas.core import AuthenticationIdentityEnum, ErrorCode, TokenAuthnMethod
+from cloud_idaas.core import (
+    AuthenticationIdentityEnum,
+    ConfigException,
+    ErrorCode,
+    HttpConfiguration,
+    IDaaSClientConfig,
+    IdentityAuthenticationConfiguration,
+    TokenAuthnMethod,
+)
 from cloud_idaas.core.factory.idaas_credential_provider_factory import IDaaSCredentialProviderFactory
 
 

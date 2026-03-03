@@ -5,7 +5,7 @@ Tests for OAuth2TokenUtil class
 import unittest
 from unittest.mock import patch
 
-from cloud_idaas import OAuth2TokenUtil
+from cloud_idaas.core import OAuth2TokenUtil
 
 
 class TestOAuth2TokenUtil(unittest.TestCase):

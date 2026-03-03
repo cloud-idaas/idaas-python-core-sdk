@@ -4,7 +4,7 @@ Tests for HttpRequest class
 
 import unittest
 
-from cloud_idaas import Builder, ContentType, HttpRequest
+from cloud_idaas.core import Builder, ContentType, HttpRequest
 from cloud_idaas.core.http.http_method import HttpMethod
 
 

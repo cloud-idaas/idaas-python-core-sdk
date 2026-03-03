@@ -4,7 +4,7 @@ Tests for HttpResponse class
 
 import unittest
 
-from cloud_idaas import HttpResponse
+from cloud_idaas.core import HttpResponse
 
 
 class TestHttpResponse(unittest.TestCase):

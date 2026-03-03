@@ -4,7 +4,7 @@ Unit tests for IDaaS Python SDK credential classes
 
 import time
 
-from cloud_idaas import (
+from cloud_idaas.core import (
     IDaaSCredential,
     IDaaSTokenResponse,
 )
@@ -345,7 +345,7 @@ class TestIDaaSTokenResponse:
 
         assert token != "test_access_token"
         assert token != 123
-        assert token != None
+        assert token is not None
 
     def test_hash_equal(self):
         """Test __hash__ method with equal tokens"""

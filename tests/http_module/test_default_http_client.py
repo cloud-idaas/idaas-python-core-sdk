@@ -5,7 +5,7 @@ Tests for DefaultHttpClient class
 import unittest
 from unittest.mock import MagicMock, patch
 
-from cloud_idaas import Builder, ClientException, ContentType, ServerException
+from cloud_idaas.core import Builder, ClientException, ContentType, ServerException
 from cloud_idaas.core.http.default_http_client import DefaultHttpClient, HttpClientFactory
 from cloud_idaas.core.http.http_method import HttpMethod
 

@@ -365,7 +365,7 @@ wheels = [
 
 [[package]]
 name = "cloud-idaas-core"
-version = "0.0.1a0"
+version = "0.0.1b0"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
@@ -391,7 +391,7 @@ dev = [
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=21.0.0" },
     { name = "build", marker = "extra == 'dev'", specifier = ">=0.7.0" },
-    { name = "cryptography", specifier = ">=45.0.4" },
+    { name = "cryptography", specifier = ">=44.0.0" },
     { name = "flake8", marker = "extra == 'dev'", specifier = ">=3.8.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=0.900" },
     { name = "pyjwt", specifier = ">=2.8.0" },

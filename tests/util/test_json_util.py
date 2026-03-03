@@ -4,7 +4,7 @@ Tests for JSONUtil class
 
 import unittest
 
-from cloud_idaas import JSONUtil
+from cloud_idaas.core import JSONUtil
 
 
 class TestJSONUtil(unittest.TestCase):

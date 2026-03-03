@@ -96,7 +96,7 @@ class StaticClientSecretAssertionProvider(JwtClientAssertionProvider):
             client_secret = self._client_secret_supplier()
             return jwt.encode(claims, client_secret, algorithm="HS256")
 
-        except ImportError:
-            raise CredentialException("PyJWT library is required. Install it with: pip install pyjwt")
+        except ImportError as e:
+            raise CredentialException("PyJWT library is required. Install it with: pip install pyjwt") from e
         except Exception as e:
-            raise CredentialException(f"Failed to generate client assertion: {e}", e)
+            raise CredentialException(f"Failed to generate client assertion: {e}", e) from e

@@ -4,7 +4,7 @@ Unit tests for StaticPrivateKeyAssertionProvider
 
 import pytest
 
-from cloud_idaas import CredentialException
+from cloud_idaas.core import CredentialException
 from cloud_idaas.core.implementation.authentication.jwt.static_private_key_assertion_provider import (
     StaticPrivateKeyAssertionProvider,
 )
