@@ -3,6 +3,7 @@ IDaaS Python SDK - Core Module
 
 This is the core module of the IDaaS Python SDK.
 """
+
 # Cache
 from cloud_idaas.core.cache import (
     CachedResultSupplier,
@@ -32,6 +33,7 @@ from cloud_idaas.core.constants import (
     ErrorCode,
     HttpConstants,
     OAuth2Constants,
+    PluginConstants,
     TokenAuthnMethod,
 )
 
@@ -98,6 +100,7 @@ from cloud_idaas.core.provider import (
     JwtClientAssertionProvider,
     OidcTokenProvider,
     Pkcs7AttestedDocumentProvider,
+    PluginCredentialProvider,
     RefreshCredentialProvider,
 )
 
@@ -109,7 +112,9 @@ from cloud_idaas.core.util import (
     FileUtil,
     JSONUtil,
     PkiUtil,
+    PluginCredentialProviderUtil,
     RequestUtil,
+    ScopeUtil,
     StringUtil,
     ValidatorUtil,
 )
@@ -137,6 +142,7 @@ __all__ = [
     "ClientDeployEnvironmentEnum",
     "ErrorCode",
     "TokenAuthnMethod",
+    "PluginConstants",
     # Exceptions
     "IDaaSException",
     "ClientException",
@@ -181,6 +187,7 @@ __all__ = [
     "OidcTokenProvider",
     "Pkcs7AttestedDocumentProvider",
     "RefreshCredentialProvider",
+    "PluginCredentialProvider",
     # Factory
     "IDaaSCredentialProviderFactory",
     # Implementation
@@ -206,4 +213,6 @@ __all__ = [
     "RequestUtil",
     "StringUtil",
     "ValidatorUtil",
+    "ScopeUtil",
+    "PluginCredentialProviderUtil",
 ]

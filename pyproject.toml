@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cloud-idaas-core"
-version = "0.0.1b0"
+version = "0.0.2b0"
 description = "Python SDK for IDaaS (Identity as a Service) M2M product"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -14,7 +14,7 @@ authors = [
     {name = "AlibabaCloud IDaaS Team", email = "cloudidaas@list.alibaba-inc.com"}
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: Apache Software License",
@@ -45,12 +45,6 @@ dev = [
     "build>=0.7.0",
 ]
 
-[project.urls]
-Homepage = "http://gitlab.alibaba-inc.com/aliyunidaas-lab/idaas-python-core-sdk"
-"Bug Reports" = "http://gitlab.alibaba-inc.com/aliyunidaas-lab/idaas-python-core-sdk/issues"
-Source = "http://gitlab.alibaba-inc.com/aliyunidaas-lab/idaas-python-core-sdk"
-Documentation = "http://gitlab.alibaba-inc.com/aliyunidaas-lab/idaas-python-core-sdk"
-
 [tool.setuptools.packages.find]
 exclude = ["tests*", ".venv*", "build*", "dist*"]
 
@@ -63,7 +57,7 @@ addopts = "-v --tb=short"
 
 [tool.black]
 line-length = 120
-target-version = ['py38', 'py39', 'py310', 'py311', 'py312', 'py313', 'py314']
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313', 'py314']
 
 [tool.mypy]
 python_version = "3.9"

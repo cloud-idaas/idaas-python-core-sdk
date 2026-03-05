@@ -27,6 +27,8 @@ JITTER_START = timedelta(minutes=5)
 # Jitter range
 JITTER_RANGE = timedelta(minutes=5)
 
+logger = logging.getLogger(__name__)
+
 
 def _get_current_time() -> datetime:
     """Get current UTC time."""
@@ -65,7 +67,6 @@ class CachedResultSupplier(Generic[T]):
         self._stale_value_behavior = stale_value_behavior
         self._cached_value: Optional[RefreshResult[T]] = None
         self._refresh_lock = threading.Lock()
-        self._logger = logging.getLogger(__name__)
 
     def get(self) -> T:
         """
@@ -133,7 +134,7 @@ class CachedResultSupplier(Generic[T]):
             lock_acquired = self._refresh_lock.acquire(timeout=BLOCKING_REFRESH_MAX_WAIT.total_seconds())
             if not lock_acquired:
                 # Failed to acquire lock due to timeout, just return current value
-                self._logger.error("Failed to acquire refresh lock")
+                logger.error("Failed to acquire refresh lock")
                 return
 
             # Double-check if refresh is still needed
@@ -185,7 +186,7 @@ class CachedResultSupplier(Generic[T]):
         if self._stale_value_behavior == StaleValueBehavior.STRICT:
             raise CacheException(cause=exception)
         else:
-            self._logger.info("Failed to refresh cache, using the old value")
+            logger.info("Failed to refresh cache, using the old value")
 
     def _jitter_time(self, time: datetime) -> datetime:
         """

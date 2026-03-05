@@ -14,6 +14,7 @@ from cloud_idaas.core.http.default_http_client import HttpClientFactory
 from cloud_idaas.core.http.http_method import HttpMethod
 from cloud_idaas.core.http.http_request import Builder
 from cloud_idaas.core.util.json_util import JSONUtil
+from cloud_idaas.core.util.plugin_credential_provider_util import PluginCredentialProviderUtil
 
 
 class OAuth2TokenUtil:
@@ -221,6 +222,11 @@ class OAuth2TokenUtil:
             OAuth2Constants.SCOPE: [scope],
         }
         return cls._post_token_endpoint(form_body, token_endpoint)
+
+    @classmethod
+    def get_token_with_plugin(cls, plugin_name, scope) -> IDaaSTokenResponse:
+        plugin_credential_provider = PluginCredentialProviderUtil.get_plugin_credential_provider(plugin_name)
+        return plugin_credential_provider.get_idaas_credential(scope)
 
     @classmethod
     def get_token_with_oidc_federated_credential(

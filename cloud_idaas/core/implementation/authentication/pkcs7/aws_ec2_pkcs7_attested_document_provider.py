@@ -25,4 +25,4 @@ class AwsEc2Pkcs7AttestedDocumentProvider(Pkcs7AttestedDocumentProvider):
         Raises:
             CredentialException: Always raised as this provider is not implemented.
         """
-        raise CredentialException("AWS EC2 PKCS7 attested document provider is not implemented")
+        raise CredentialException(error_message="AWS EC2 PKCS7 attested document provider is not implemented")

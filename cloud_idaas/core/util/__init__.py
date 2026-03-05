@@ -12,7 +12,9 @@ from cloud_idaas.core.util.exception_analyzer import ExceptionAnalyzer
 from cloud_idaas.core.util.file_util import FileUtil
 from cloud_idaas.core.util.json_util import JSONUtil
 from cloud_idaas.core.util.pki_util import PkiUtil
+from cloud_idaas.core.util.plugin_credential_provider_util import PluginCredentialProviderUtil
 from cloud_idaas.core.util.request_util import RequestUtil
+from cloud_idaas.core.util.scope_util import ScopeUtil
 from cloud_idaas.core.util.string_util import StringUtil
 from cloud_idaas.core.util.validator_util import ValidatorUtil
 
@@ -27,4 +29,6 @@ __all__ = [
     "BrowserUtil",
     "TokenAuthnMethod",
     "ConfigReader",
+    "ScopeUtil",
+    "PluginCredentialProviderUtil",
 ]

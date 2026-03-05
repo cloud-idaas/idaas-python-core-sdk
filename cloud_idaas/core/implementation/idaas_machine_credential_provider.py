@@ -13,7 +13,7 @@ from typing import Callable, Optional
 
 from cloud_idaas.core.cache.refresh_result import RefreshResult
 from cloud_idaas.core.cache.stale_value_behavior import StaleValueBehavior
-from cloud_idaas.core.constants import TokenAuthnMethod
+from cloud_idaas.core.constants import ErrorCode, TokenAuthnMethod
 from cloud_idaas.core.credential import IDaaSCredential, IDaaSTokenResponse
 from cloud_idaas.core.exceptions import CredentialException
 from cloud_idaas.core.http.oauth2_token_util import OAuth2TokenUtil
@@ -56,6 +56,7 @@ class IDaaSMachineCredentialProvider(AbstractRefreshedCredentialProvider[IDaaSCr
         x509_cert_chains: Optional[str] = None,
         async_credential_update_enabled: bool = False,
         stale_value_behavior: StaleValueBehavior = StaleValueBehavior.STRICT,
+        plugin_name: Optional[str] = None,
     ):
         """
         Initialize the IDaaS machine credential provider.
@@ -74,6 +75,7 @@ class IDaaSMachineCredentialProvider(AbstractRefreshedCredentialProvider[IDaaSCr
             x509_cert_chains: X509 certificate chains (for PCA).
             async_credential_update_enabled: Whether to enable async credential update.
             stale_value_behavior: Behavior when cached value is stale.
+            plugin_name: The plugin name (for PLUGIN authentication method).
         """
         if StringUtil.is_blank(client_id):
             raise ValueError("clientId is blank")
@@ -95,6 +97,7 @@ class IDaaSMachineCredentialProvider(AbstractRefreshedCredentialProvider[IDaaSCr
         self._oidc_token_provider = oidc_token_provider
         self._client_x509_certificate = client_x509_certificate
         self._x509_cert_chains = x509_cert_chains
+        self._plugin_name = plugin_name
 
     @property
     def authn_method(self) -> TokenAuthnMethod:
@@ -190,6 +193,16 @@ class IDaaSMachineCredentialProvider(AbstractRefreshedCredentialProvider[IDaaSCr
     def x509_cert_chains(self, value: str) -> None:
         """Set the X509 certificate chains."""
         self._x509_cert_chains = value
+
+    @property
+    def plugin_name(self) -> Optional[str]:
+        """Get the plugin name."""
+        return self._plugin_name
+
+    @plugin_name.setter
+    def plugin_name(self, value: str) -> None:
+        """Set the plugin name."""
+        self._plugin_name = value
 
     def get_credential(self) -> IDaaSCredential:
         """
@@ -290,7 +303,14 @@ class IDaaSMachineCredentialProvider(AbstractRefreshedCredentialProvider[IDaaSCr
                 self._scope,
             )
 
-        raise CredentialException(f"Unsupported authentication method: {self._authn_method}")
+        elif self._authn_method == TokenAuthnMethod.PLUGIN:
+            if StringUtil.is_blank(self._plugin_name):
+                raise ValueError("plugin_name is blank")
+            return OAuth2TokenUtil.get_token_with_plugin(self._plugin_name, self._scope)
+
+        raise CredentialException(
+            ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD, f"Unsupported authentication method: {self._authn_method}"
+        )
 
     def _refresh_credential(self) -> RefreshResult[IDaaSCredential]:
         """
@@ -337,6 +357,7 @@ class IDaaSMachineCredentialProviderBuilder:
         self._x509_cert_chains: Optional[str] = None
         self._async_credential_update_enabled = False
         self._stale_value_behavior = StaleValueBehavior.STRICT
+        self._plugin_name: Optional[str] = None
 
     def client_id(self, value: str) -> "IDaaSMachineCredentialProviderBuilder":
         """Set the client ID."""
@@ -405,6 +426,11 @@ class IDaaSMachineCredentialProviderBuilder:
         self._stale_value_behavior = value
         return self
 
+    def plugin_name(self, value: str) -> "IDaaSMachineCredentialProviderBuilder":
+        """Set the plugin name."""
+        self._plugin_name = value
+        return self
+
     def build(self) -> IDaaSMachineCredentialProvider:
         """
         Build the IDaaS machine credential provider.
@@ -426,4 +452,5 @@ class IDaaSMachineCredentialProviderBuilder:
             x509_cert_chains=self._x509_cert_chains,
             async_credential_update_enabled=self._async_credential_update_enabled,
             stale_value_behavior=self._stale_value_behavior,
+            plugin_name=self._plugin_name,
         )

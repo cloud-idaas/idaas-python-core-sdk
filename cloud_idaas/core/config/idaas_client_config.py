@@ -22,6 +22,7 @@ class IDaaSClientConfig:
         self._token_endpoint: Optional[str] = None
         self._device_authorization_endpoint: Optional[str] = None
         self._developer_api_endpoint: Optional[str] = None
+        self._openapi_endpoint: Optional[str] = None
         self._authn_configuration: Optional[IdentityAuthenticationConfiguration] = None
         self._http_configuration: HttpConfiguration = HttpConfiguration()
 
@@ -82,6 +83,14 @@ class IDaaSClientConfig:
         self._developer_api_endpoint = value
 
     @property
+    def openapi_endpoint(self) -> Optional[str]:
+        return self._openapi_endpoint
+
+    @openapi_endpoint.setter
+    def openapi_endpoint(self, value: str):
+        self._openapi_endpoint = value
+
+    @property
     def authn_configuration(self) -> Optional[IdentityAuthenticationConfiguration]:
         return self._authn_configuration
 
@@ -110,6 +119,7 @@ class IDaaSClientConfig:
             f"issuer={self._issuer!r}, token_endpoint={self._token_endpoint!r}, "
             f"device_authorization_endpoint={self._device_authorization_endpoint!r}, "
             f"developer_api_endpoint={self._developer_api_endpoint!r}, "
+            f"openapi_endpoint={self._openapi_endpoint!r}, "
             f"authn_configuration={self._authn_configuration}, "
             f"http_configuration={self._http_configuration})"
         )
@@ -134,6 +144,7 @@ class IDaaSClientConfig:
             and self._token_endpoint == other._token_endpoint
             and self._device_authorization_endpoint == other._device_authorization_endpoint
             and self._developer_api_endpoint == other._developer_api_endpoint
+            and self._openapi_endpoint == other._openapi_endpoint
             and self._authn_configuration == other._authn_configuration
             and self._http_configuration == other._http_configuration
         )
@@ -154,6 +165,7 @@ class IDaaSClientConfig:
                 self._token_endpoint,
                 self._device_authorization_endpoint,
                 self._developer_api_endpoint,
+                self._openapi_endpoint,
                 self._authn_configuration,
                 self._http_configuration,
             )
@@ -175,6 +187,7 @@ class IDaaSClientConfig:
         self._token_endpoint = other._token_endpoint
         self._device_authorization_endpoint = other._device_authorization_endpoint
         self._developer_api_endpoint = other._developer_api_endpoint
+        self._openapi_endpoint = other._openapi_endpoint
         if other._authn_configuration is not None:
             self._authn_configuration = IdentityAuthenticationConfiguration.copy(other._authn_configuration)
         else:
@@ -223,6 +236,8 @@ class IDaaSClientConfig:
                 config.device_authorization_endpoint = normalized_data["device_authorization_endpoint"]
             if "developer_api_endpoint" in normalized_data:
                 config.developer_api_endpoint = normalized_data["developer_api_endpoint"]
+            if "open_api_endpoint" in normalized_data:
+                config.openapi_endpoint = normalized_data["open_api_endpoint"]
             if "authn_configuration" in normalized_data:
                 if normalized_data["authn_configuration"] is not None:
                     config.authn_configuration = IdentityAuthenticationConfiguration.from_dict(

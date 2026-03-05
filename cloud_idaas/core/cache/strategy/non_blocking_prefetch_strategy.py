@@ -15,7 +15,7 @@ from cloud_idaas.core.cache.prefetch_strategy import PrefetchStrategy
 MAX_CONCURRENT_REFRESHES = 100
 THREAD_POOL_KEEP_ALIVE_SECONDS = 60
 
-_logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class NonBlockingPrefetchStrategy(PrefetchStrategy):
@@ -46,7 +46,7 @@ class NonBlockingPrefetchStrategy(PrefetchStrategy):
                           value refresh operation.
         """
         if not self._concurrent_refresh_lease.acquire(blocking=False):
-            _logger.warning("Only %d concurrent refreshes are allowed", MAX_CONCURRENT_REFRESHES)
+            logger.warning("Only %d concurrent refreshes are allowed", MAX_CONCURRENT_REFRESHES)
             return
 
         if not self._currently_prefetching.is_set():

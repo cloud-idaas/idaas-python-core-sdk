@@ -8,6 +8,7 @@ from cloud_idaas.core.provider.idaas_credential_provider import IDaaSCredentialP
 from cloud_idaas.core.provider.jwt_client_assertion_provider import JwtClientAssertionProvider
 from cloud_idaas.core.provider.oidc_token_provider import OidcTokenProvider
 from cloud_idaas.core.provider.pkcs7_attested_document_provider import Pkcs7AttestedDocumentProvider
+from cloud_idaas.core.provider.plugin_credential_provider import PluginCredentialProvider
 from cloud_idaas.core.provider.refresh_credential_provider import RefreshCredentialProvider, RefreshResult
 
 __all__ = [
@@ -16,5 +17,6 @@ __all__ = [
     "OidcTokenProvider",
     "Pkcs7AttestedDocumentProvider",
     "RefreshCredentialProvider",
+    "PluginCredentialProvider",
     "RefreshResult",
 ]

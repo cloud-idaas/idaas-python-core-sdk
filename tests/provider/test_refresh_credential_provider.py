@@ -6,7 +6,8 @@ from unittest.mock import Mock
 
 import pytest
 
-from cloud_idaas.core.provider import RefreshCredentialProvider, RefreshResult
+from cloud_idaas.core.cache import RefreshResult
+from cloud_idaas.core.provider import RefreshCredentialProvider
 
 
 class MockRefreshCredentialProvider(RefreshCredentialProvider):
@@ -57,57 +58,67 @@ class TestRefreshResult:
 
     def test_initialization(self):
         """Test RefreshResult initialization."""
-        result = RefreshResult("test_value", True)
+        from datetime import datetime
+
+        stale_time = datetime(2025, 1, 1, 12, 0, 0)
+        prefetch_time = datetime(2025, 1, 1, 11, 0, 0)
+        result = RefreshResult("test_value", stale_time, prefetch_time)
         assert result.value == "test_value"
-        assert result.is_refreshed is True
+        assert result.stale_time == stale_time
+        assert result.prefetch_time == prefetch_time
 
     def test_value_property(self):
         """Test value property."""
-        result = RefreshResult("test_value", False)
+        result = RefreshResult("test_value")
         assert result.value == "test_value"
-
-    def test_is_refreshed_property(self):
-        """Test is_refreshed property."""
-        result = RefreshResult("test_value", True)
-        assert result.is_refreshed is True
-
-    def test_is_refreshed_false(self):
-        """Test is_refreshed property when False."""
-        result = RefreshResult("test_value", False)
-        assert result.is_refreshed is False
 
     def test_value_can_be_any_type(self):
         """Test that value can be of any type."""
         # String
-        result1 = RefreshResult("string_value", True)
+        result1 = RefreshResult("string_value")
         assert result1.value == "string_value"
 
         # Integer
-        result2 = RefreshResult(123, True)
+        result2 = RefreshResult(123)
         assert result2.value == 123
 
         # List
-        result3 = RefreshResult([1, 2, 3], True)
+        result3 = RefreshResult([1, 2, 3])
         assert result3.value == [1, 2, 3]
 
         # Dict
-        result4 = RefreshResult({"key": "value"}, True)
+        result4 = RefreshResult({"key": "value"})
         assert result4.value == {"key": "value"}
 
         # None
-        result5 = RefreshResult(None, True)
+        result5 = RefreshResult(None)
         assert result5.value is None
 
     def test_value_property_readonly(self):
         """Test that value property is read-only."""
-        result = RefreshResult("test_value", True)
+        result = RefreshResult("test_value")
         # Should not be able to set value directly (property has no setter)
         # This test verifies the property behaves as expected
         assert result.value == "test_value"
 
-    def test_is_refreshed_property_readonly(self):
-        """Test that is_refreshed property is read-only."""
-        result = RefreshResult("test_value", True)
-        # Should not be able to set is_refreshed directly (property has no setter)
-        # This test verifies the property behaves as expected
-        assert result.is_refreshed is True
+    def test_stale_time_property(self):
+        """Test stale_time property."""
+        from datetime import datetime
+
+        stale_time = datetime(2025, 1, 1, 12, 0, 0)
+        result = RefreshResult("test_value", stale_time=stale_time)
+        assert result.stale_time == stale_time
+
+    def test_prefetch_time_property(self):
+        """Test prefetch_time property."""
+        from datetime import datetime
+
+        prefetch_time = datetime(2025, 1, 1, 11, 0, 0)
+        result = RefreshResult("test_value", prefetch_time=prefetch_time)
+        assert result.prefetch_time == prefetch_time
+
+    def test_default_times_are_none(self):
+        """Test that default stale_time and prefetch_time are None."""
+        result = RefreshResult("test_value")
+        assert result.stale_time is None
+        assert result.prefetch_time is None

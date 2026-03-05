@@ -149,7 +149,7 @@ class AlibabaCloudEcsAttestedDocumentProvider(AbstractRefreshedCredentialProvide
 
             audience_parameter = quote(JSONUtil.to_json_string(audience_value), safe="")
         except Exception as e:
-            raise EncodingException(f"Failed to URL encode audience parameter: {e}", e) from e
+            raise EncodingException(error_message=f"Failed to URL encode audience parameter: {e}", cause=e) from e
 
         # Get token from metadata service
         token_headers = {

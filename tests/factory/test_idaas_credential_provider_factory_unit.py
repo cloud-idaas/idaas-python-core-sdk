@@ -56,9 +56,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
         IDaaSCredentialProviderFactory.init_with_config(config)
 
         # Second initialization should just log and return
-        with patch(
-            "cloud_idaas.core.factory.idaas_credential_provider_factory.IDaaSCredentialProviderFactory._logger"
-        ) as mock_logger:
+        with patch("cloud_idaas.core.factory.idaas_credential_provider_factory.logger") as mock_logger:
             IDaaSCredentialProviderFactory.init()
             mock_logger.info.assert_called_once()
 
@@ -177,9 +175,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
             IDaaSCredentialProviderFactory.init_with_config(config)
 
         # Second initialization should just log and return
-        with patch(
-            "cloud_idaas.core.factory.idaas_credential_provider_factory.IDaaSCredentialProviderFactory._logger"
-        ) as mock_logger:
+        with patch("cloud_idaas.core.factory.idaas_credential_provider_factory.logger") as mock_logger:
             IDaaSCredentialProviderFactory.init_with_config(config)
             mock_logger.info.assert_called_once()
 

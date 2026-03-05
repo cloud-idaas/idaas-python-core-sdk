@@ -55,7 +55,7 @@ class FileOidcTokenProvider(OidcTokenProvider):
                 self._oidc_token = FileUtil.read_file(self._oidc_token_file_path)
                 self._expires_time = self._parse_expiration_time(self._oidc_token)
             except Exception as e:
-                raise CredentialException(f"Failed to read or parse OIDC token: {e}", e) from e
+                raise CredentialException(error_message=f"Failed to read or parse OIDC token: {e}", cause=e) from e
         return self._oidc_token
 
     def _parse_expiration_time(self, token: str) -> Optional[int]:

@@ -74,7 +74,9 @@ class StaticClientSecretAssertionProvider(JwtClientAssertionProvider):
         """
         # Validate required fields
         if not self._client_id or not self._token_endpoint:
-            raise CredentialException("client_id and token_endpoint are required for generating client assertion")
+            raise CredentialException(
+                error_message="client_id and token_endpoint are required for generating client assertion"
+            )
 
         try:
             from datetime import datetime, timedelta, timezone
@@ -97,6 +99,8 @@ class StaticClientSecretAssertionProvider(JwtClientAssertionProvider):
             return jwt.encode(claims, client_secret, algorithm="HS256")
 
         except ImportError as e:
-            raise CredentialException("PyJWT library is required. Install it with: pip install pyjwt") from e
+            raise CredentialException(
+                error_message="PyJWT library is required. Install it with: pip install pyjwt", cause=e
+            ) from e
         except Exception as e:
-            raise CredentialException(f"Failed to generate client assertion: {e}", e) from e
+            raise CredentialException(error_message=f"Failed to generate client assertion: {e}", cause=e) from e

@@ -24,6 +24,7 @@ class IdentityAuthenticationConfiguration:
         self._client_x509_certificate: Optional[str] = None
         self._x509_cert_chains: Optional[str] = None
         self._human_authenticate_client_id: str = "iap_developer"
+        self._plugin_name: Optional[str] = None
 
     @property
     def identity_type(self) -> AuthenticationIdentityEnum:
@@ -113,6 +114,14 @@ class IdentityAuthenticationConfiguration:
     def human_authenticate_client_id(self, value: str):
         self._human_authenticate_client_id = value
 
+    @property
+    def plugin_name(self) -> Optional[str]:
+        return self._plugin_name
+
+    @plugin_name.setter
+    def plugin_name(self, value: str):
+        self._plugin_name = value
+
     def __repr__(self) -> str:
         """
         Return a string representation of the identity authentication configuration.
@@ -131,7 +140,8 @@ class IdentityAuthenticationConfiguration:
             f"oidc_token_file_path={self._oidc_token_file_path!r}, "
             f"client_x509_certificate={self._client_x509_certificate!r}, "
             f"x509_cert_chains={self._x509_cert_chains!r}, "
-            f"human_authenticate_client_id={self._human_authenticate_client_id!r})"
+            f"human_authenticate_client_id={self._human_authenticate_client_id!r}, "
+            f"plugin_name={self._plugin_name!r})"
         )
 
     def __eq__(self, other) -> bool:
@@ -158,6 +168,7 @@ class IdentityAuthenticationConfiguration:
             and self._client_x509_certificate == other._client_x509_certificate
             and self._x509_cert_chains == other._x509_cert_chains
             and self._human_authenticate_client_id == other._human_authenticate_client_id
+            and self._plugin_name == other._plugin_name
         )
 
     def __hash__(self) -> int:
@@ -180,6 +191,7 @@ class IdentityAuthenticationConfiguration:
                 self._client_x509_certificate,
                 self._x509_cert_chains,
                 self._human_authenticate_client_id,
+                self._plugin_name,
             )
         )
 
@@ -209,6 +221,7 @@ class IdentityAuthenticationConfiguration:
         target._client_x509_certificate = source._client_x509_certificate
         target._x509_cert_chains = source._x509_cert_chains
         target._human_authenticate_client_id = source._human_authenticate_client_id
+        target._plugin_name = source._plugin_name
         return target
 
     @classmethod
@@ -238,28 +251,18 @@ class IdentityAuthenticationConfiguration:
 
             # Handle identity_type (also supports legacy key: authentication_subject)
             identity_value = normalized_data.get("identity_type") or normalized_data.get("authentication_subject")
-            if identity_value and isinstance(identity_value, str):
-                if identity_value == AuthenticationIdentityEnum.HUMAN.value:
-                    authn_config.identity_type = AuthenticationIdentityEnum.HUMAN
-                elif identity_value == AuthenticationIdentityEnum.CLIENT.value:
-                    authn_config.identity_type = AuthenticationIdentityEnum.CLIENT
+            try:
+                authn_config.identity_type = AuthenticationIdentityEnum(identity_value)
+            except ValueError:
+                pass  # Invalid identity_type, keep default
 
             # Handle authn_method
             authn_method_str = normalized_data.get("authn_method")
             if authn_method_str and isinstance(authn_method_str, str):
-                for method in [
-                    TokenAuthnMethod.NONE,
-                    TokenAuthnMethod.CLIENT_SECRET_POST,
-                    TokenAuthnMethod.CLIENT_SECRET_BASIC,
-                    TokenAuthnMethod.CLIENT_SECRET_JWT,
-                    TokenAuthnMethod.PRIVATE_KEY_JWT,
-                    TokenAuthnMethod.PKCS7,
-                    TokenAuthnMethod.PCA,
-                    TokenAuthnMethod.OIDC,
-                ]:
-                    if authn_method_str == method.value:
-                        authn_config.authn_method = method
-                        break
+                try:
+                    authn_config.authn_method = TokenAuthnMethod(authn_method_str)
+                except ValueError:
+                    pass  # Invalid authn_method, keep default
 
             if "client_secret_env_var_name" in normalized_data:
                 authn_config.client_secret_env_var_name = normalized_data["client_secret_env_var_name"]
@@ -273,22 +276,10 @@ class IdentityAuthenticationConfiguration:
             # Handle client_deploy_environment
             client_deploy_env_str = normalized_data.get("client_deploy_environment")
             if client_deploy_env_str and isinstance(client_deploy_env_str, str):
-                for env in [
-                    ClientDeployEnvironmentEnum.COMMON,
-                    ClientDeployEnvironmentEnum.COMPUTER,
-                    ClientDeployEnvironmentEnum.KUBERNETES,
-                    ClientDeployEnvironmentEnum.ALIBABA_CLOUD_ECS,
-                    ClientDeployEnvironmentEnum.ALIBABA_CLOUD_ECI,
-                    ClientDeployEnvironmentEnum.ALIBABA_CLOUD_ACK,
-                    ClientDeployEnvironmentEnum.AWS_EC2,
-                    ClientDeployEnvironmentEnum.AWS_ESK,
-                    ClientDeployEnvironmentEnum.GOOGLE_VM,
-                    ClientDeployEnvironmentEnum.HUAWEI_CLOUD_ECS,
-                    ClientDeployEnvironmentEnum.CUSTOM,
-                ]:
-                    if client_deploy_env_str == env.value:
-                        authn_config.client_deploy_environment = env
-                        break
+                try:
+                    authn_config.client_deploy_environment = ClientDeployEnvironmentEnum(client_deploy_env_str)
+                except ValueError:
+                    pass  # Invalid client_deploy_environment, keep default
 
             if "oidc_token_file_path_env_var_name" in normalized_data:
                 authn_config.oidc_token_file_path_env_var_name = normalized_data["oidc_token_file_path_env_var_name"]
@@ -300,4 +291,6 @@ class IdentityAuthenticationConfiguration:
                 authn_config.x509_cert_chains = normalized_data["x509_cert_chains"]
             if "human_authenticate_client_id" in normalized_data:
                 authn_config.human_authenticate_client_id = normalized_data["human_authenticate_client_id"]
+            if "plugin_name" in normalized_data:
+                authn_config.plugin_name = normalized_data["plugin_name"]
         return authn_config

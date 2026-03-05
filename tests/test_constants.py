@@ -250,100 +250,103 @@ class TestErrorCode:
     """Test cases for ErrorCode"""
 
     def test_idaas_instance_id_not_found(self):
-        assert ErrorCode.IDAAS_INSTANCE_ID_NOT_FOUND == "IDaaSInstanceIdNotFound"
+        assert ErrorCode.IDAAS_INSTANCE_ID_NOT_FOUND.value == "IDaaSInstanceIdNotFound"
 
     def test_client_id_not_found(self):
-        assert ErrorCode.CLIENT_ID_NOT_FOUND == "ClientIdNotFound"
+        assert ErrorCode.CLIENT_ID_NOT_FOUND.value == "ClientIdNotFound"
 
     def test_issuer_endpoint_not_found(self):
-        assert ErrorCode.ISSUER_ENDPOINT_NOT_FOUND == "IssuerEndpointNotFound"
+        assert ErrorCode.ISSUER_ENDPOINT_NOT_FOUND.value == "IssuerEndpointNotFound"
 
     def test_token_endpoint_not_found(self):
-        assert ErrorCode.TOKEN_ENDPOINT_NOT_FOUND == "TokenEndpointNotFound"
+        assert ErrorCode.TOKEN_ENDPOINT_NOT_FOUND.value == "TokenEndpointNotFound"
 
     def test_human_authenticate_client_id_not_found(self):
-        assert ErrorCode.HUMAN_AUTHENTICATE_CLIENT_ID_NOT_FOUND == "HumanAuthenticateClientIdNotFound"
+        assert ErrorCode.HUMAN_AUTHENTICATE_CLIENT_ID_NOT_FOUND.value == "HumanAuthenticateClientIdNotFound"
 
     def test_human_authenticate_scope_not_found(self):
-        assert ErrorCode.HUMAN_AUTHENTICATE_SCOPE_NOT_FOUND == "HumanAuthenticateScopeNotFound"
+        assert ErrorCode.HUMAN_AUTHENTICATE_SCOPE_NOT_FOUND.value == "HumanAuthenticateScopeNotFound"
 
     def test_device_authorization_endpoint_not_found(self):
-        assert ErrorCode.DEVICE_AUTHORIZATION_ENDPOINT_NOT_FOUND == "DeviceAuthorizationEndpointNotFound"
+        assert ErrorCode.DEVICE_AUTHORIZATION_ENDPOINT_NOT_FOUND.value == "DeviceAuthorizationEndpointNotFound"
 
     def test_authn_configuration_not_found(self):
-        assert ErrorCode.AUTHN_CONFIGURATION_NOT_FOUND == "AuthnConfigurationNotFound"
+        assert ErrorCode.AUTHN_CONFIGURATION_NOT_FOUND.value == "AuthnConfigurationNotFound"
 
     def test_client_secret_env_var_name_not_found(self):
-        assert ErrorCode.CLIENT_SECRET_ENV_VAR_NAME_NOT_FOUND == "ClientSecretEnvVarNameNotFound"
+        assert ErrorCode.CLIENT_SECRET_ENV_VAR_NAME_NOT_FOUND.value == "ClientSecretEnvVarNameNotFound"
 
     def test_private_key_env_var_name_not_found(self):
-        assert ErrorCode.PRIVATE_KEY_ENV_VAR_NAME_NOT_FOUND == "PrivateKeyEnvVarNameNotFound"
+        assert ErrorCode.PRIVATE_KEY_ENV_VAR_NAME_NOT_FOUND.value == "PrivateKeyEnvVarNameNotFound"
 
     def test_application_federated_credential_name_not_found(self):
-        assert ErrorCode.APPLICATION_FEDERATED_CREDENTIAL_NAME_NOT_FOUND == "ApplicationFederatedCredentialNameNotFound"
+        assert (
+            ErrorCode.APPLICATION_FEDERATED_CREDENTIAL_NAME_NOT_FOUND.value
+            == "ApplicationFederatedCredentialNameNotFound"
+        )
 
     def test_client_deploy_environment_not_found(self):
-        assert ErrorCode.CLIENT_DEPLOY_ENVIRONMENT_NOT_FOUND == "ClientDeployEnvironmentNotFound"
+        assert ErrorCode.CLIENT_DEPLOY_ENVIRONMENT_NOT_FOUND.value == "ClientDeployEnvironmentNotFound"
 
     def test_client_x509_certificate_not_found(self):
-        assert ErrorCode.CLIENT_X509_CERTIFICATE_NOT_FOUND == "ClientX509CertificateNotFound"
+        assert ErrorCode.CLIENT_X509_CERTIFICATE_NOT_FOUND.value == "ClientX509CertificateNotFound"
 
     def test_x509_cert_chains_not_found(self):
-        assert ErrorCode.X509_CERT_CHAINS_NOT_FOUND == "X509CertChainsNotFound"
+        assert ErrorCode.X509_CERT_CHAINS_NOT_FOUND.value == "X509CertChainsNotFound"
 
     def test_unsupported_client_deploy_environment(self):
-        assert ErrorCode.UNSUPPORTED_CLIENT_DEPLOY_ENVIRONMENT == "UnsupportedClientDeployEnvironment"
+        assert ErrorCode.UNSUPPORTED_CLIENT_DEPLOY_ENVIRONMENT.value == "UnsupportedClientDeployEnvironment"
 
     def test_unsupported_authentication_method(self):
-        assert ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD == "UnsupportedAuthenticationMethod"
+        assert ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD.value == "UnsupportedAuthenticationMethod"
 
     def test_connect_timeout_not_valid(self):
-        assert ErrorCode.CONNECT_TIMEOUT_NOT_VALID == "ConnectTimeoutNotValid"
+        assert ErrorCode.CONNECT_TIMEOUT_NOT_VALID.value == "ConnectTimeoutNotValid"
 
     def test_read_timeout_not_valid(self):
-        assert ErrorCode.READ_TIMEOUT_NOT_VALID == "ReadTimeoutNotValid"
+        assert ErrorCode.READ_TIMEOUT_NOT_VALID.value == "ReadTimeoutNotValid"
 
     def test_idaas_credential_provider_factory_not_init(self):
-        assert ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT == "IDaaSCredentialProviderFactoryNotInit"
+        assert ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT.value == "IDaaSCredentialProviderFactoryNotInit"
 
     def test_not_supported_web_key(self):
-        assert ErrorCode.NOT_SUPPORTED_WEB_KEY == "NotSupportedWebKey"
+        assert ErrorCode.NOT_SUPPORTED_WEB_KEY.value == "NotSupportedWebKey"
 
     def test_refresh_token_empty(self):
-        assert ErrorCode.REFRESH_TOKEN_EMPTY == "RefreshTokenEmpty"
+        assert ErrorCode.REFRESH_TOKEN_EMPTY.value == "RefreshTokenEmpty"
 
     def test_developer_api_endpoint_not_found(self):
-        assert ErrorCode.DEVELOPER_API_ENDPOINT_NOT_FOUND == "DeveloperApiEndpointNotFound"
+        assert ErrorCode.DEVELOPER_API_ENDPOINT_NOT_FOUND.value == "DeveloperApiEndpointNotFound"
 
     def test_load_config_file_failed(self):
-        assert ErrorCode.LOAD_CONFIG_FILE_FAILED == "LoadConfigFileFailed"
+        assert ErrorCode.LOAD_CONFIG_FILE_FAILED.value == "LoadConfigFileFailed"
 
     def test_invalid_request(self):
-        assert ErrorCode.INVALID_REQUEST == "InvalidRequest"
+        assert ErrorCode.INVALID_REQUEST.value == "InvalidRequest"
 
     def test_connect_time_out(self):
-        assert ErrorCode.CONNECT_TIME_OUT == "ConnectTimeOut"
+        assert ErrorCode.CONNECT_TIME_OUT.value == "ConnectTimeOut"
 
     def test_read_time_out(self):
-        assert ErrorCode.READ_TIME_OUT == "ReadTimeOut"
+        assert ErrorCode.READ_TIME_OUT.value == "ReadTimeOut"
 
     def test_client_error(self):
-        assert ErrorCode.CLIENT_ERROR == "ClientError"
+        assert ErrorCode.CLIENT_ERROR.value == "ClientError"
 
     def test_server_error(self):
-        assert ErrorCode.SERVER_ERROR == "ServerError"
+        assert ErrorCode.SERVER_ERROR.value == "ServerError"
 
     def test_invalid_token_type(self):
-        assert ErrorCode.INVALID_TOKEN_TYPE == "InvalidTokenType"
+        assert ErrorCode.INVALID_TOKEN_TYPE.value == "InvalidTokenType"
 
     def test_access_token_not_found(self):
-        assert ErrorCode.ACCESS_TOKEN_NOT_FOUND == "AccessTokenNotFound"
+        assert ErrorCode.ACCESS_TOKEN_NOT_FOUND.value == "AccessTokenNotFound"
 
     def test_id_token_not_found(self):
-        assert ErrorCode.ID_TOKEN_NOT_FOUND == "IdTokenNotFound"
+        assert ErrorCode.ID_TOKEN_NOT_FOUND.value == "IdTokenNotFound"
 
     def test_refresh_token_not_found(self):
-        assert ErrorCode.REFRESH_TOKEN_NOT_FOUND == "RefreshTokenNotFound"
+        assert ErrorCode.REFRESH_TOKEN_NOT_FOUND.value == "RefreshTokenNotFound"
 
 
 class TestTokenAuthnMethod:

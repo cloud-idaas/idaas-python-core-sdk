@@ -153,7 +153,7 @@ class ClientDeployEnvironmentEnum(_StrEnum):
     CUSTOM = "CUSTOM"
 
 
-class ErrorCode:
+class ErrorCode(_StrEnum):
     """
     Enum for error codes.
     """
@@ -190,6 +190,11 @@ class ErrorCode:
     ACCESS_TOKEN_NOT_FOUND = "AccessTokenNotFound"
     ID_TOKEN_NOT_FOUND = "IdTokenNotFound"
     REFRESH_TOKEN_NOT_FOUND = "RefreshTokenNotFound"
+    OPEN_API_ENDPOINT_NOT_FOUND = "OpenApiEndpointNotFound"
+    PLUGIN_NAME_NOT_FOUND = "PluginNameNotFound"
+    MULTIPLE_AUDIENCE_NOT_SUPPORTED = "MultipleAudienceNotSupported"
+    INVALID_SCOPE = "InvalidScope"
+    UNSUPPORTED_OPEN_API_TYPE = "UnsupportedOpenApiType"
 
 
 class TokenAuthnMethod(_StrEnum):
@@ -206,6 +211,7 @@ class TokenAuthnMethod(_StrEnum):
     PKCS7 = "PKCS7"
     PCA = "PCA"
     OIDC = "OIDC"
+    PLUGIN = "PLUGIN"
 
     @staticmethod
     def equals(method1: Optional[str], method2: Optional[str]) -> bool:
@@ -224,3 +230,7 @@ class TokenAuthnMethod(_StrEnum):
         if method1 is None or method2 is None:
             return False
         return method1 == method2
+
+
+class PluginConstants:
+    PLUGIN_GROUP_NAME = "cloud_idaas.core.plugins"

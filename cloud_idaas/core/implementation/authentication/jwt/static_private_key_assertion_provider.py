@@ -33,7 +33,7 @@ class StaticPrivateKeyAssertionProvider(JwtClientAssertionProvider):
         try:
             self._private_key = PkiUtil.parse_private_key_from_pem(private_key_string)
         except Exception as e:
-            raise CredentialException(f"Failed to parse private key: {e}", e) from e
+            raise CredentialException(error_message=f"Failed to parse private key: {e}", cause=e) from e
 
         self._client_id: Optional[str] = None
         self._token_endpoint: Optional[str] = None
@@ -114,6 +114,8 @@ class StaticPrivateKeyAssertionProvider(JwtClientAssertionProvider):
             return jwt.encode(claims, self._private_key, algorithm=algorithm)
 
         except ImportError as e:
-            raise CredentialException("PyJWT library is required. Install it with: pip install pyjwt") from e
+            raise CredentialException(
+                error_message="PyJWT library is required. Install it with: pip install pyjwt", cause=e
+            ) from e
         except Exception as e:
-            raise CredentialException(f"Failed to generate client assertion: {e}", str(e)) from e
+            raise CredentialException(error_message=f"Failed to generate client assertion: {e}", cause=e) from e

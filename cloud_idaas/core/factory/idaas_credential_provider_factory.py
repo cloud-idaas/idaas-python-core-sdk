@@ -17,6 +17,8 @@ from cloud_idaas.core.provider import IDaaSCredentialProvider, OidcTokenProvider
 from cloud_idaas.core.util import JSONUtil, TokenAuthnMethod, ValidatorUtil
 from cloud_idaas.core.util.config_reader import ConfigReader
 
+logger = logging.getLogger(__name__)
+
 
 class IDaaSCredentialProviderFactory:
     """
@@ -28,8 +30,6 @@ class IDaaSCredentialProviderFactory:
     _human_federate_credential_oidc_token_provider: Optional[OidcTokenProvider] = None
     _credential_providers: dict = {}
 
-    _logger = logging.getLogger(__name__)
-
     @classmethod
     def init(cls, config_path: str = None) -> None:
         """
@@ -40,7 +40,7 @@ class IDaaSCredentialProviderFactory:
                         If not provided, will use environment variable or default path.
         """
         if cls._initialized:
-            cls._logger.info("IDaaS Credential Provider Factory has been initialized.")
+            logger.info("IDaaS Credential Provider Factory has been initialized.")
             return
 
         try:
@@ -51,7 +51,7 @@ class IDaaSCredentialProviderFactory:
             cls._validate_http_config(cls._idaas_client_config.http_configuration)
             cls._initialized = True
         except Exception as e:
-            cls._logger.error("IDaaS Credential Provider Factory init failed.", exc_info=True)
+            logger.error("IDaaS Credential Provider Factory init failed. cause: %s: %s", type(e).__name__, e)
             raise ConfigException(
                 ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT, "IDaaS Credential Provider Factory init failed."
             ) from e
@@ -67,7 +67,7 @@ class IDaaSCredentialProviderFactory:
             authentication_config: The authentication configuration.
         """
         if cls._initialized:
-            cls._logger.info("IDaaS Credential Provider Factory has been initialized.")
+            logger.info("IDaaS Credential Provider Factory has been initialized.")
             return
 
         cls._idaas_client_config.assign(authentication_config)
@@ -84,7 +84,7 @@ class IDaaSCredentialProviderFactory:
         authentication_configuration = cls._idaas_client_config.authn_configuration
         if authentication_configuration.identity_type == AuthenticationIdentityEnum.HUMAN:
             # Note: HumanFederatedOidcTokenProvider will be implemented later
-            cls._logger.info("Human identity type detected. OIDC token provider initialization will be implemented.")
+            logger.info("Human identity type detected. OIDC token provider initialization will be implemented.")
 
         scope = cls._idaas_client_config.scope
         if scope not in cls._credential_providers:
@@ -289,6 +289,9 @@ class IDaaSCredentialProviderFactory:
                 assertion_provider.scope = scope
                 builder.client_assertion_provider(assertion_provider)
 
+        elif authn_method == TokenAuthnMethod.PLUGIN:
+            builder.plugin_name(authn_config.plugin_name)
+
         else:
             raise ConfigException(
                 ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD, f"Unsupported authentication method: {authn_method}"
@@ -315,6 +318,15 @@ class IDaaSCredentialProviderFactory:
         return cls._idaas_client_config.developer_api_endpoint
 
     @classmethod
+    def get_openapi_endpoint(cls) -> str:
+        if not cls._initialized:
+            raise ConfigException(
+                ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT,
+                "IDaaS Credential Provider Factory has not been initialized.",
+            )
+        return cls._idaas_client_config.openapi_endpoint
+
+    @classmethod
     def get_idaas_instance_id(cls) -> str:
         """
         Get the IDaaS instance ID.
@@ -331,6 +343,24 @@ class IDaaSCredentialProviderFactory:
                 "IDaaS Credential Provider Factory has not been initialized.",
             )
         return cls._idaas_client_config.idaas_instance_id
+
+    @classmethod
+    def get_client_id(cls) -> str:
+        """
+        Get the client ID.
+
+        Returns:
+            The client ID.
+
+        Raises:
+            ConfigException: If factory has not been initialized.
+        """
+        if not cls._initialized:
+            raise ConfigException(
+                ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT,
+                "IDaaS Credential Provider Factory has not been initialized.",
+            )
+        return cls._idaas_client_config.client_id
 
     @classmethod
     def get_http_config(cls) -> HttpConfiguration:

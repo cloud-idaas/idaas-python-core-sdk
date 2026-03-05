@@ -53,7 +53,7 @@ class RequestUtil:
         try:
             return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
         except ValueError as e:
-            raise CredentialException(f"Failed to parse date: {e}") from e
+            raise CredentialException(error_message=f"Failed to parse date: {e}") from e
 
     @staticmethod
     def get_unique_nonce() -> str:
@@ -78,7 +78,7 @@ class RequestUtil:
             digest = hashlib.md5(sb.encode("utf-8")).hexdigest()
             return digest
         except Exception as e:
-            raise CredentialException(f"Failed to generate nonce: {e}") from e
+            raise CredentialException(error_message=f"Failed to generate nonce: {e}") from e
 
     @staticmethod
     def compose_url(endpoint: str, path: Optional[str], queries: dict[str, str], protocol: str) -> str:
@@ -111,7 +111,7 @@ class RequestUtil:
                 if val is not None:
                     builder_parts.append(f"{encoded_key}={encoded_val}")
         except Exception as e:
-            raise EncodingException(f"Failed to encode URL: {e}") from e
+            raise EncodingException(error_message=f"Failed to encode URL: {e}") from e
 
         query = "&".join(builder_parts)
         return url_builder + query
