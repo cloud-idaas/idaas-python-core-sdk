@@ -365,7 +365,7 @@ wheels = [
 
 [[package]]
 name = "cloud-idaas-core"
-version = "0.0.2b0"
+version = "0.0.2b1"
 source = { editable = "." }
 dependencies = [
     { name = "cryptography" },
