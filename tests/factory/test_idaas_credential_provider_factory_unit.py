@@ -252,7 +252,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
         config.issuer = "https://example.com"
         config.token_endpoint = "https://example.com/token"
         config.developer_api_endpoint = "https://example.com/api"
-        config.scope = "test-scope"
+        config.scope = "api://test|scope"
 
         authn_config = IdentityAuthenticationConfiguration()
         authn_config.identity_type = AuthenticationIdentityEnum.CLIENT
@@ -275,7 +275,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
             provider = IDaaSCredentialProviderFactory.get_idaas_credential_provider()
 
             self.assertEqual(provider, mock_provider)
-            mock_create.assert_called_once_with("test-scope")
+            mock_create.assert_called_once_with("api://test|scope")
 
     def test_get_idaas_credential_provider_by_scope_after_init(self):
         """Test get_idaas_credential_provider_by_scope returns credential provider after initialization."""
@@ -285,7 +285,7 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
         config.issuer = "https://example.com"
         config.token_endpoint = "https://example.com/token"
         config.developer_api_endpoint = "https://example.com/api"
-        config.scope = "default-scope"
+        config.scope = "api://default|scope"
 
         authn_config = IdentityAuthenticationConfiguration()
         authn_config.identity_type = AuthenticationIdentityEnum.CLIENT
@@ -305,10 +305,10 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
             mock_provider = Mock()
             mock_create.return_value = mock_provider
 
-            provider = IDaaSCredentialProviderFactory.get_idaas_credential_provider_by_scope("test-scope")
+            provider = IDaaSCredentialProviderFactory.get_idaas_credential_provider_by_scope("api://test|scope")
 
             self.assertEqual(provider, mock_provider)
-            mock_create.assert_called_once_with("test-scope")
+            mock_create.assert_called_once_with("api://test|scope")
 
     def test_get_developer_api_endpoint_after_init(self):
         """Test get_developer_api_endpoint returns correct value after initialization."""
@@ -481,6 +481,130 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
 
         with self.assertRaises(ConfigException) as context:
             IDaaSCredentialProviderFactory._create_credential_provider("test-scope")
+
+        self.assertEqual(context.exception.error_code, ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD)
+
+    def test_get_token_exchange_credential_provider_before_init_raises_exception(self):
+        """Test get_token_exchange_credential_provider raises exception before initialization."""
+        with self.assertRaises(ConfigException) as context:
+            IDaaSCredentialProviderFactory.get_token_exchange_credential_provider()
+
+        self.assertEqual(context.exception.error_code, ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT)
+
+    def test_get_token_exchange_credential_provider_by_scope_before_init_raises_exception(self):
+        """Test get_token_exchange_credential_provider_by_scope raises exception before initialization."""
+        with self.assertRaises(ConfigException) as context:
+            IDaaSCredentialProviderFactory.get_token_exchange_credential_provider_by_scope("api://test|scope")
+
+        self.assertEqual(context.exception.error_code, ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT)
+
+    @patch(
+        "cloud_idaas.core.implementation.idaas_machine_token_exchange_credential_provider.IDaaSMachineTokenExchangeCredentialProviderBuilder"
+    )
+    def test_create_token_exchange_credential_provider_client_secret_post(self, mock_builder_class):
+        """Test _create_token_exchange_credential_provider with CLIENT_SECRET_POST."""
+        # Setup configuration
+        config = IDaaSClientConfig()
+        config.client_id = "test-client"
+        config.token_endpoint = "https://example.com/token"
+
+        authn_config = IdentityAuthenticationConfiguration()
+        authn_config.authn_method = TokenAuthnMethod.CLIENT_SECRET_POST
+        authn_config.client_secret_env_var_name = "TEST_SECRET"
+        config.authn_configuration = authn_config
+
+        # Replace the factory's config with our test config
+        IDaaSCredentialProviderFactory._idaas_client_config = config
+        IDaaSCredentialProviderFactory._initialized = True
+
+        # Mock the builder
+        mock_builder = Mock()
+        mock_builder.client_id.return_value = mock_builder
+        mock_builder.scope.return_value = mock_builder
+        mock_builder.token_endpoint.return_value = mock_builder
+        mock_builder.authn_method.return_value = mock_builder
+        mock_builder.client_secret_supplier.return_value = mock_builder
+        mock_builder.build.return_value = Mock()
+
+        mock_builder_class.return_value = mock_builder
+
+        IDaaSCredentialProviderFactory._create_token_exchange_credential_provider("api://test|scope")
+
+        # Verify the builder was called with correct parameters
+        mock_builder_class.assert_called_once()
+        mock_builder.client_id.assert_called_once_with("test-client")
+        mock_builder.scope.assert_called_once_with("api://test|scope")
+        mock_builder.token_endpoint.assert_called_once_with("https://example.com/token")
+        mock_builder.authn_method.assert_called_once_with(TokenAuthnMethod.CLIENT_SECRET_POST)
+        mock_builder.build.assert_called_once()
+
+    @patch(
+        "cloud_idaas.core.implementation.idaas_machine_token_exchange_credential_provider.IDaaSMachineTokenExchangeCredentialProviderBuilder"
+    )
+    @patch(
+        "cloud_idaas.core.implementation.authentication.jwt.static_private_key_assertion_provider.StaticPrivateKeyAssertionProvider"
+    )
+    def test_create_token_exchange_credential_provider_private_key_jwt(
+        self, mock_assertion_provider_class, mock_builder_class
+    ):
+        """Test _create_token_exchange_credential_provider with PRIVATE_KEY_JWT."""
+        # Setup configuration
+        config = IDaaSClientConfig()
+        config.client_id = "test-client"
+        config.token_endpoint = "https://example.com/token"
+
+        authn_config = IdentityAuthenticationConfiguration()
+        authn_config.authn_method = TokenAuthnMethod.PRIVATE_KEY_JWT
+        authn_config.private_key_env_var_name = "TEST_PRIVATE_KEY"
+        config.authn_configuration = authn_config
+
+        # Replace the factory's config with our test config
+        IDaaSCredentialProviderFactory._idaas_client_config = config
+        IDaaSCredentialProviderFactory._initialized = True
+
+        # Mock the assertion provider
+        mock_assertion_provider = Mock()
+        mock_assertion_provider_class.return_value = mock_assertion_provider
+
+        # Mock the builder
+        mock_builder = Mock()
+        mock_builder.client_id.return_value = mock_builder
+        mock_builder.scope.return_value = mock_builder
+        mock_builder.token_endpoint.return_value = mock_builder
+        mock_builder.authn_method.return_value = mock_builder
+        mock_builder.client_assertion_provider.return_value = mock_builder
+        mock_builder.build.return_value = Mock()
+
+        mock_builder_class.return_value = mock_builder
+
+        with patch.dict(os.environ, {"TEST_PRIVATE_KEY": "test_private_key"}):
+            IDaaSCredentialProviderFactory._create_token_exchange_credential_provider("api://test|scope")
+
+        # Verify the builder was called with correct parameters
+        mock_builder_class.assert_called_once()
+        mock_builder.client_id.assert_called_once_with("test-client")
+        mock_builder.scope.assert_called_once_with("api://test|scope")
+        mock_builder.token_endpoint.assert_called_once_with("https://example.com/token")
+        mock_builder.authn_method.assert_called_once_with(TokenAuthnMethod.PRIVATE_KEY_JWT)
+        mock_builder.build.assert_called_once()
+
+    def test_create_token_exchange_credential_provider_unsupported_method_raises_exception(self):
+        """Test _create_token_exchange_credential_provider raises exception for unsupported authentication method."""
+        # Setup configuration
+        config = IDaaSClientConfig()
+        config.client_id = "test-client"
+        config.token_endpoint = "https://example.com/token"
+
+        authn_config = IdentityAuthenticationConfiguration()
+        authn_config.authn_method = "UNSUPPORTED_METHOD"
+        config.authn_configuration = authn_config
+
+        # Replace the factory's config with our test config
+        IDaaSCredentialProviderFactory._idaas_client_config = config
+        IDaaSCredentialProviderFactory._initialized = True
+
+        with self.assertRaises(ConfigException) as context:
+            IDaaSCredentialProviderFactory._create_token_exchange_credential_provider("api://test|scope")
 
         self.assertEqual(context.exception.error_code, ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD)
 

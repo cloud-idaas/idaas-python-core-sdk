@@ -15,7 +15,10 @@ class TestStaticClientSecretAssertionProvider:
 
     def test_initialization(self):
         """Test initialization with client secret supplier."""
-        supplier = lambda: "test_secret"
+
+        def supplier():
+            return "test_secret"
+
         provider = StaticClientSecretAssertionProvider(supplier)
         assert provider._client_secret_supplier == supplier
 

@@ -363,7 +363,10 @@ class TestIDaaSMachineCredentialProviderBuilder:
 
     def test_builder_with_all_parameters(self):
         """Test builder with all parameters."""
-        mock_secret_supplier = lambda: "test_secret"
+
+        def mock_secret_supplier():
+            return "test_secret"
+
         mock_assertion_provider = Mock()
         mock_attested_provider = Mock()
         mock_oidc_provider = Mock()

@@ -13,8 +13,8 @@ from cloud_idaas.core.constants import (
     ErrorCode,
 )
 from cloud_idaas.core.exceptions import ConfigException
-from cloud_idaas.core.provider import IDaaSCredentialProvider, OidcTokenProvider
-from cloud_idaas.core.util import JSONUtil, TokenAuthnMethod, ValidatorUtil
+from cloud_idaas.core.provider import IDaaSCredentialProvider, IDaaSTokenExchangeCredentialProvider, OidcTokenProvider
+from cloud_idaas.core.util import JSONUtil, ScopeUtil, TokenAuthnMethod, ValidatorUtil
 from cloud_idaas.core.util.config_reader import ConfigReader
 
 logger = logging.getLogger(__name__)
@@ -28,7 +28,8 @@ class IDaaSCredentialProviderFactory:
     _idaas_client_config: IDaaSClientConfig = IDaaSClientConfig()
     _initialized: bool = False
     _human_federate_credential_oidc_token_provider: Optional[OidcTokenProvider] = None
-    _credential_providers: dict = {}
+    _credential_providers: dict[str, IDaaSCredentialProvider] = {}
+    _token_exchange_providers: dict[str, IDaaSTokenExchangeCredentialProvider] = {}
 
     @classmethod
     def init(cls, config_path: str = None) -> None:
@@ -89,6 +90,7 @@ class IDaaSCredentialProviderFactory:
         scope = cls._idaas_client_config.scope
         if scope not in cls._credential_providers:
             cls._credential_providers[scope] = cls._create_credential_provider(scope)
+            cls._token_exchange_providers[scope] = cls._create_token_exchange_credential_provider(scope)
 
     @classmethod
     def _validate_client_config(cls, client_config: IDaaSClientConfig) -> None:
@@ -101,8 +103,7 @@ class IDaaSCredentialProviderFactory:
         ValidatorUtil.validate_base_config(client_config)
         if client_config.authn_configuration.identity_type == AuthenticationIdentityEnum.HUMAN:
             ValidatorUtil.validate_human_config(client_config)
-        else:
-            ValidatorUtil.validate_client_config(client_config)
+        ValidatorUtil.validate_client_config(client_config)
 
     @classmethod
     def _validate_http_config(cls, http_configuration: HttpConfiguration) -> None:
@@ -147,10 +148,52 @@ class IDaaSCredentialProviderFactory:
                 "IDaaS Credential Provider Factory has not been initialized.",
             )
 
+        ScopeUtil.validate_scope(scope)
+
         if scope not in cls._credential_providers:
             cls._credential_providers[scope] = cls._create_credential_provider(scope)
 
         return cls._credential_providers[scope]
+
+    @classmethod
+    def get_token_exchange_credential_provider(cls) -> IDaaSTokenExchangeCredentialProvider:
+        """
+        Get the default Token Exchange credential provider.
+
+        Returns:
+            The Token Exchange credential provider.
+
+        Raises:
+            ConfigException: If factory has not been initialized.
+        """
+        return cls.get_token_exchange_credential_provider_by_scope(cls._idaas_client_config.scope)
+
+    @classmethod
+    def get_token_exchange_credential_provider_by_scope(cls, scope: str) -> IDaaSTokenExchangeCredentialProvider:
+        """
+        Get the Token Exchange credential provider for a specific scope.
+
+        Args:
+            scope: The OAuth scope.
+
+        Returns:
+            The Token Exchange credential provider.
+
+        Raises:
+            ConfigException: If factory has not been initialized.
+        """
+        if not cls._initialized:
+            raise ConfigException(
+                ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT,
+                "IDaaS Credential Provider Factory has not been initialized.",
+            )
+
+        ScopeUtil.validate_scope(scope)
+
+        if scope not in cls._token_exchange_providers:
+            cls._token_exchange_providers[scope] = cls._create_token_exchange_credential_provider(scope)
+
+        return cls._token_exchange_providers[scope]
 
     @classmethod
     def _create_credential_provider(cls, scope: str) -> IDaaSCredentialProvider:
@@ -300,6 +343,156 @@ class IDaaSCredentialProviderFactory:
         return builder.build()
 
     @classmethod
+    def _create_token_exchange_credential_provider(cls, scope: str) -> IDaaSTokenExchangeCredentialProvider:
+        """
+        Create a Token Exchange credential provider for the given scope.
+
+        Args:
+            scope: The OAuth scope.
+
+        Returns:
+            The created Token Exchange credential provider.
+
+        Raises:
+            ConfigException: If authentication method is not supported.
+        """
+        from cloud_idaas.core.implementation.authentication.jwt.static_client_secret_assertion_provider import (
+            StaticClientSecretAssertionProvider,
+        )
+        from cloud_idaas.core.implementation.authentication.jwt.static_private_key_assertion_provider import (
+            StaticPrivateKeyAssertionProvider,
+        )
+        from cloud_idaas.core.implementation.authentication.oidc.file_oidc_token_provider import FileOidcTokenProvider
+        from cloud_idaas.core.implementation.authentication.oidc.static_oidc_token_provider import (
+            StaticOidcTokenProvider,
+        )
+        from cloud_idaas.core.implementation.authentication.pkcs7.alibaba_cloud_ecs_attested_document_provider import (
+            AlibabaCloudEcsAttestedDocumentProvider,
+        )
+        from cloud_idaas.core.implementation.authentication.pkcs7.aws_ec2_pkcs7_attested_document_provider import (
+            AwsEc2Pkcs7AttestedDocumentProvider,
+        )
+        from cloud_idaas.core.implementation.authentication.pkcs7.static_pkcs7_attested_document_provider import (
+            StaticPkcs7AttestedDocumentProvider,
+        )
+        from cloud_idaas.core.implementation.idaas_machine_token_exchange_credential_provider import (
+            IDaaSMachineTokenExchangeCredentialProviderBuilder,
+        )
+
+        config = cls._idaas_client_config
+        authn_config = config.authn_configuration
+        authn_method = authn_config.authn_method
+
+        # Create builder with common configuration
+        builder = IDaaSMachineTokenExchangeCredentialProviderBuilder()
+        builder.client_id(config.client_id)
+        builder.scope(scope)
+        builder.token_endpoint(config.token_endpoint)
+        builder.authn_method(authn_method)
+
+        # Configure based on authentication method
+        if authn_method == TokenAuthnMethod.CLIENT_SECRET_BASIC or authn_method == TokenAuthnMethod.CLIENT_SECRET_POST:
+            # Client secret authentication
+            if authn_config.client_secret_env_var_name:
+
+                def get_client_secret():
+                    secret = os.environ.get(authn_config.client_secret_env_var_name)
+                    if not secret:
+                        raise ValueError(f"Environment variable {authn_config.client_secret_env_var_name} is not set")
+                    return secret
+
+                builder.client_secret_supplier(get_client_secret)
+
+        elif authn_method == TokenAuthnMethod.CLIENT_SECRET_JWT:
+            # Client secret JWT assertion
+            if authn_config.client_secret_env_var_name:
+
+                def get_client_secret():
+                    secret = os.environ.get(authn_config.client_secret_env_var_name)
+                    if not secret:
+                        raise ValueError(f"Environment variable {authn_config.client_secret_env_var_name} is not set")
+                    return secret
+
+                assertion_provider = StaticClientSecretAssertionProvider(get_client_secret)
+                assertion_provider.client_id = config.client_id
+                assertion_provider.token_endpoint = config.token_endpoint
+                assertion_provider.scope = scope
+                builder.client_assertion_provider(assertion_provider)
+
+        elif authn_method == TokenAuthnMethod.PRIVATE_KEY_JWT:
+            # Private key JWT assertion
+            if authn_config.private_key_env_var_name:
+                private_key = os.environ.get(authn_config.private_key_env_var_name)
+                if not private_key:
+                    raise ValueError(f"Environment variable {authn_config.private_key_env_var_name} is not set")
+                assertion_provider = StaticPrivateKeyAssertionProvider(private_key)
+                assertion_provider.client_id = config.client_id
+                assertion_provider.token_endpoint = config.token_endpoint
+                assertion_provider.scope = scope
+                builder.client_assertion_provider(assertion_provider)
+
+        elif authn_method == TokenAuthnMethod.PKCS7:
+            # PKCS7 attested document
+            builder.application_federated_credential_name(authn_config.application_federated_credential_name)
+
+            # Create attested document provider based on deployment environment
+            if authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.ALIBABA_CLOUD_ECS:
+                attested_provider = AlibabaCloudEcsAttestedDocumentProvider()
+            elif authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.AWS_EC2:
+                attested_provider = AwsEc2Pkcs7AttestedDocumentProvider()
+            else:
+                # Static PKCS7 attested document
+                attested_provider = StaticPkcs7AttestedDocumentProvider()
+            builder.attested_document_provider(attested_provider)
+
+        elif authn_method == TokenAuthnMethod.OIDC:
+            # OIDC token
+            builder.application_federated_credential_name(authn_config.application_federated_credential_name)
+
+            # Create OIDC token provider
+            if authn_config.oidc_token_file_path_env_var_name:
+                token_file_path = os.environ.get(authn_config.oidc_token_file_path_env_var_name)
+                if token_file_path:
+                    oidc_provider = FileOidcTokenProvider(token_file_path)
+                else:
+                    oidc_provider = StaticOidcTokenProvider()
+            elif authn_config.oidc_token_file_path:
+                oidc_provider = FileOidcTokenProvider(authn_config.oidc_token_file_path)
+            else:
+                oidc_provider = StaticOidcTokenProvider()
+            builder.oidc_token_provider(oidc_provider)
+
+        elif authn_method == TokenAuthnMethod.PCA:
+            # Private Certificate Authority
+            builder.application_federated_credential_name(authn_config.application_federated_credential_name)
+            builder.client_x509_certificate(authn_config.client_x509_certificate)
+            builder.x509_cert_chains(authn_config.x509_cert_chains)
+
+            # Need client assertion provider for PCA
+            if authn_config.private_key_env_var_name:
+                private_key = os.environ.get(authn_config.private_key_env_var_name)
+                if not private_key:
+                    raise ValueError(f"Environment variable {authn_config.private_key_env_var_name} is not set")
+                assertion_provider = StaticPrivateKeyAssertionProvider(private_key)
+                assertion_provider.client_id = config.client_id
+                assertion_provider.token_endpoint = config.token_endpoint
+                assertion_provider.scope = scope
+                builder.client_assertion_provider(assertion_provider)
+
+        elif authn_method == TokenAuthnMethod.PLUGIN:
+            raise ConfigException(
+                ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD,
+                f"Unsupported authentication method: {authn_method} for token exchange",
+            )
+
+        else:
+            raise ConfigException(
+                ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD, f"Unsupported authentication method: {authn_method}"
+            )
+
+        return builder.build()
+
+    @classmethod
     def get_developer_api_endpoint(cls) -> str:
         """
         Get the developer API endpoint.
@@ -387,3 +580,4 @@ class IDaaSCredentialProviderFactory:
         cls._idaas_client_config = IDaaSClientConfig()
         cls._human_federate_credential_oidc_token_provider = None
         cls._credential_providers.clear()
+        cls._token_exchange_providers.clear()

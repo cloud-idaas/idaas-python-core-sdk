@@ -109,14 +109,11 @@ class TestOAuth2Constants:
     def test_subject_token_type(self):
         assert OAuth2Constants.SUBJECT_TOKEN_TYPE == "subject_token_type"
 
-    def test_subject_token_type_value(self):
-        assert OAuth2Constants.SUBJECT_TOKEN_TYPE_VALUE == "urn:ietf:params:oauth:token-type:jwt"
+    def test_access_token_type_value(self):
+        assert OAuth2Constants.ACCESS_TOKEN_TYPE_VALUE == "urn:ietf:params:oauth:token-type:access_token"
 
     def test_requested_token_type(self):
         assert OAuth2Constants.REQUESTED_TOKEN_TYPE == "requested_token_type"
-
-    def test_requested_token_type_value(self):
-        assert OAuth2Constants.REQUESTED_TOKEN_TYPE_VALUE == "urn:ietf:params:oauth:token-type:access_token"
 
     def test_audience(self):
         assert OAuth2Constants.AUDIENCE == "audience"

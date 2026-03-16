@@ -9,9 +9,15 @@ from cloud_idaas.core.implementation.idaas_machine_credential_provider import (
     IDaaSMachineCredentialProvider,
     IDaaSMachineCredentialProviderBuilder,
 )
+from cloud_idaas.core.implementation.idaas_machine_token_exchange_credential_provider import (
+    IDaaSMachineTokenExchangeCredentialProvider,
+    IDaaSMachineTokenExchangeCredentialProviderBuilder,
+)
 
 __all__ = [
     "AbstractRefreshedCredentialProvider",
     "IDaaSMachineCredentialProvider",
     "IDaaSMachineCredentialProviderBuilder",
+    "IDaaSMachineTokenExchangeCredentialProvider",
+    "IDaaSMachineTokenExchangeCredentialProviderBuilder",
 ]

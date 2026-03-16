@@ -4,41 +4,41 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 [![Development Status](https://img.shields.io/badge/status-Beta-orange)](https://pypi.org/project/cloud-idaas-core/)
 
-[简体中文](README_zh.md)
+[English](README.md)
 
-Python SDK for IDaaS (Identity as a Service) M2M product, providing developers with convenient machine-to-machine authentication capabilities.
+IDaaS（身份即服务）M2M 产品的 Python SDK，为开发者提供便捷的机器对机器认证能力。
 
-## Features
+## 功能特性
 
-- **Multiple Authentication Methods**: Supports JWT Client Secret, JWT Private Key, OIDC Token, PKCS7 Attested Document, and other M2M authentication methods
-- **Intelligent Caching Mechanism**: Built-in credential caching strategy with prefetch and stale value handling to reduce unnecessary network requests
-- **Flexible Configuration**: Supports configuration files, environment variables, and programmatic configuration
-- **Plugin Extensions**: Supports custom credential providers for special scenarios
-- **Cloud-Native Support**: Built-in attested document support for Alibaba Cloud ECS and Alibaba cloud ACK
-- **Token Exchange (RFC 8693)**: Exchange tokens for different scopes or audiences, supporting token downscoping and service-to-service access scenarios
+- **多种认证方式**：支持 JWT Client Secret、JWT Private Key、OIDC Token、PKCS7 可信文档等多种 M2M 认证方式
+- **智能缓存机制**：内置凭证缓存策略，支持预取和过期值处理，减少不必要的网络请求
+- **灵活配置**：支持配置文件、环境变量和编程方式配置
+- **插件扩展**：支持自定义凭证提供者以应对特殊场景
+- **云原生支持**：内置阿里云 ECS 和阿里云 ACK 的可信文档支持
+- **令牌交换（RFC 8693）**：支持令牌交换以获取不同 scope 或 audience 的访问令牌，适用于令牌降权和服务间调用场景
 
-## Requirements
+## 环境要求
 
 - Python >= 3.9
-- Dependencies:
+- 依赖：
   - requests >= 2.31.0
   - cryptography >= 44.0.0
   - PyJWT >= 2.8.0
   - urllib3 >= 2.5.0
 
-## Installation
+## 安装
 
 ```bash
 pip install cloud-idaas-core
 ```
 
-## Quick Start
+## 快速开始
 
-> **Important**: Before using any SDK features, you must call `IDaaSCredentialProviderFactory.init()` to initialize the SDK. This step is **required** and should be done once at application startup.
+> **重要提示**：在使用任何 SDK 功能之前，必须调用 `IDaaSCredentialProviderFactory.init()` 初始化 SDK。此步骤是**必需的**，应在应用启动时执行一次。
 
-### 1. Configuration File
+### 1. 配置文件
 
-Create a configuration file `~/.cloud_idaas/client_config.json`:
+创建配置文件 `~/.cloud_idaas/client_config.json`：
 
 ```json
 {
@@ -56,41 +56,41 @@ Create a configuration file `~/.cloud_idaas/client_config.json`:
 }
 ```
 
-### 2. Environment Variables
+### 2. 环境变量
 
-Set environment variables:
+设置环境变量：
 
 ```bash
 export IDAAS_CLIENT_SECRET="your-client-secret"
 ```
 
-### 3. Use in code
+### 3. 代码中使用
 
 ```python
 from cloud_idaas.core import IDaaSCredentialProviderFactory
 
-# Initialize (automatically loads configuration file)
+# 初始化（自动加载配置文件）
 IDaaSCredentialProviderFactory.init()
 
-# Get credential provider
+# 获取凭证提供者
 credential_provider = IDaaSCredentialProviderFactory.get_idaas_credential_provider()
 
-# Get access token
+# 获取访问令牌
 access_token = credential_provider.get_bearer_token()
 print(f"Access Token: {access_token}")
 ```
 
-## Configuration Details
+## 配置详情
 
-### Configuration File Paths
+### 配置文件路径
 
-The SDK searches for configuration files in the following order:
+SDK 按以下顺序查找配置文件：
 
-1. Pass path during initialization: `IDaaSCredentialProviderFactory.init("/.../client-config.json")`
-2. Environment variable path: `CLOUD_IDAAS_CONFIG_PATH=/.../client-config.json`
-3. Default path: `~/.cloud_idaas/client-config.json`
+1. 初始化时传入路径：`IDaaSCredentialProviderFactory.init("/.../client-config.json")`
+2. 环境变量路径：`CLOUD_IDAAS_CONFIG_PATH=/.../client-config.json`
+3. 默认路径：`~/.cloud_idaas/client-config.json`
 
-### Complete Configuration Example
+### 完整配置示例
 
 ```json
 {
@@ -113,45 +113,45 @@ The SDK searches for configuration files in the following order:
 }
 ```
 
-### Configuration Items
+### 配置项说明
 
-| Configuration Item | Type | Required | Description |
+| 配置项 | 类型 | 必填 | 说明 |
 |-------------------|------|----------|-------------|
-| idaasInstanceId | string | Yes | IDaaS instance ID |
-| clientId | string | Yes | Client ID for authentication |
-| issuer | string | Yes | OAuth2 issuer URL |
-| tokenEndpoint | string | Yes | OAuth2 token endpoint URL |
-| scope | string | No | Requested scope  |
-| openApiEndpoint | string | No | OpenAPI endpoint |
-| developerApiEndpoint | string | No | Developer API endpoint |
-| authnConfiguration | object | Yes | Authentication configuration |
-| httpConfiguration | object | No | HTTP client configuration |
+| idaasInstanceId | string | 是 | IDaaS 实例 ID |
+| clientId | string | 是 | 用于认证的客户端 ID |
+| issuer | string | 是 | OAuth2 签发者 URL |
+| tokenEndpoint | string | 是 | OAuth2 令牌端点 URL |
+| scope | string | 否 | 请求的 scope |
+| openApiEndpoint | string | 否 | OpenAPI 端点 |
+| developerApiEndpoint | string | 否 | 开发者 API 端点 |
+| authnConfiguration | object | 是 | 认证配置 |
+| httpConfiguration | object | 否 | HTTP 客户端配置 |
 
-### Scope Format
+### Scope 格式
 
-The SDK uses a specific scope format with audience and scope values separated by `|`:
+SDK 使用特定的 scope 格式，audience 和 scope 值通过 `|` 分隔：
 
 ```
 audience|scope_value
 ```
 
-Examples:
+示例：
 - `api.example.com|read:file`
 - `api.example.com|write:file`
 - `resource.server|admin`
 
-Multiple scope values for the same audience can be requested:
+可以请求同一 audience 的多个 scope 值：
 ```
 api.example.com|read:file api.example.com|write:file
 ```
 
-**Note**: Multiple audiences in a single request are not supported.
+**注意**：不支持在单个请求中使用多个 audience。
 
-## Authentication Methods
+## 认证方式
 
-### Client Secret Authentication
+### 客户端密钥认证
 
-Use Client Secret for authentication. Supports `CLIENT_SECRET_BASIC`, `CLIENT_SECRET_POST`, and `CLIENT_SECRET_JWT` methods.
+使用客户端密钥进行认证。支持 `CLIENT_SECRET_BASIC`、`CLIENT_SECRET_POST` 和 `CLIENT_SECRET_JWT` 方式。
 
 ```json
 {
@@ -174,9 +174,9 @@ Use Client Secret for authentication. Supports `CLIENT_SECRET_BASIC`, `CLIENT_SE
 }
 ```
 
-### Private Key Authentication
+### 私钥认证
 
-Use private key for authentication, offering higher security.
+使用私钥进行认证，提供更高的安全性。
 
 ```json
 {
@@ -199,9 +199,9 @@ Use private key for authentication, offering higher security.
 }
 ```
 
-### PKCS7 Federated Authentication
+### PKCS7 联邦认证
 
-Use PKCS7 attested document for authentication in cloud environments.
+在云环境中使用 PKCS7 可信文档进行认证。
 
 ```json
 {
@@ -225,9 +225,9 @@ Use PKCS7 attested document for authentication in cloud environments.
 }
 ```
 
-### OIDC Federated Authentication
+### OIDC 联邦认证
 
-Use OIDC token for authentication.
+使用 OIDC 令牌进行认证。
 
 ```json
 {
@@ -251,9 +251,9 @@ Use OIDC token for authentication.
 }
 ```
 
-### PCA (X.509 Certificate) Authentication
+### PCA（X.509 证书）认证
 
-Use X.509 certificate for authentication.
+使用 X.509 证书进行认证。
 
 ```json
 {
@@ -278,9 +278,9 @@ Use X.509 certificate for authentication.
 }
 ```
 
-### Plugin Authentication
+### 插件认证
 
-Use plugin-based credential provider for authentication.
+使用基于插件的凭证提供者进行认证。
 
 ```json
 {
@@ -304,53 +304,53 @@ Use plugin-based credential provider for authentication.
 ```
 
 
-## Token Exchange
+## 令牌交换
 
-Token Exchange (RFC 8693) allows you to exchange a subject token for a new access token with different scope or audience. This is useful for token downscoping and service-to-service access scenarios.
+令牌交换（RFC 8693）允许您将主体令牌交换为具有不同 scope 或 audience 的新访问令牌。这适用于令牌降权和服务间调用场景。
 
-### Basic Token Exchange
+### 基本令牌交换
 
-For working examples, see the `samples/` directory:
+完整示例请参考 `samples/` 目录：
 
-- `samples/token_exchange_with_client_secret_authentication.py` - Token Exchange with client secret authentication
+- `samples/token_exchange_with_client_secret_authentication.py` - 使用客户端密钥认证的令牌交换
 
 ```python
 from cloud_idaas.core import IDaaSCredentialProviderFactory, OAuth2Constants
 
-# Initialize the factory
+# 初始化工厂
 IDaaSCredentialProviderFactory.init()
 
-# Get Token Exchange credential provider (scope from config file)
+# 获取令牌交换凭证提供者（scope 从配置文件读取）
 token_exchange_provider = IDaaSCredentialProviderFactory.get_token_exchange_credential_provider()
 
-# Or get with specific scope
+# 或通过参数指定 scope
 # token_exchange_provider = IDaaSCredentialProviderFactory.get_token_exchange_credential_provider_by_scope("api://target-service|read api://target-service|write")
 
-# Exchange subject token for access token
+# 交换主体令牌获取访问令牌
 access_token = token_exchange_provider.get_issued_token(
     subject_token="your_subject_token",
     subject_token_type=OAuth2Constants.ACCESS_TOKEN_TYPE_VALUE,
 )
 ```
 
-### Token Exchange Parameters
+### 令牌交换参数
 
-| Parameter | Type | Required | Description |
+| 参数 | 类型 | 必填 | 说明 |
 |-----------|------|----------|-------------|
-| subject_token | string | Yes | The token to be exchanged |
-| subject_token_type | string | Yes | Type of the subject token (e.g., `urn:ietf:params:oauth:token-type:access_token`) |
-| requested_token_type | string | No | Type of token requested (defaults to access token) |
+| subject_token | string | 是 | 待交换的令牌 |
+| subject_token_type | string | 是 | 主体令牌类型（如 `urn:ietf:params:oauth:token-type:access_token`） |
+| requested_token_type | string | 否 | 请求的令牌类型（默认为访问令牌） |
 
-### Use Cases
+### 使用场景
 
-1. **Token Downscoping**: Exchange a token with broader permissions for one with limited scope
-2. **Service-to-Service Access**: Transfer the same user identity across services to obtain the required access token
+1. **令牌降权**：将具有较大权限的令牌交换为具有较小权限（更窄 scope）的令牌
+2. **服务间调用**：同一用户身份在不同服务间传递，换取目标服务所需的访问令牌
 
-## Support and Feedback
+## 支持与反馈
 
-- **Email**: cloudidaas@list.alibaba-inc.com
-- **Issues**: Please submit an Issue for questions or suggestions
+- **邮箱**：cloudidaas@list.alibaba-inc.com
+- **问题反馈**：请提交 Issue 进行问题反馈或建议
 
-## License
+## 许可证
 
-This project is licensed under the [Apache License 2.0](LICENSE).
+本项目基于 [Apache License 2.0](LICENSE) 许可证。

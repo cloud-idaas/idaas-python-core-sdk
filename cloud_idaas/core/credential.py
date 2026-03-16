@@ -67,6 +67,7 @@ class IDaaSTokenResponse(IDaaSCredential):
         self.id_token: Optional[str] = None
         self.refresh_token: Optional[str] = None
         self.token_type: Optional[str] = None
+        self.issued_token_type: Optional[str] = None
         self.expires_in: int = 0
         self.expires_at: int = 0
 
@@ -76,7 +77,15 @@ class IDaaSTokenResponse(IDaaSCredential):
         Maps _access_token -> access_token, etc.
         """
         public_name = name.lstrip("_")
-        if public_name in ("access_token", "id_token", "refresh_token", "token_type", "expires_in", "expires_at"):
+        if public_name in (
+            "access_token",
+            "id_token",
+            "refresh_token",
+            "token_type",
+            "issued_token_type",
+            "expires_in",
+            "expires_at",
+        ):
             return object.__getattribute__(self, public_name)
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
@@ -86,7 +95,15 @@ class IDaaSTokenResponse(IDaaSCredential):
         Maps _access_token -> access_token, etc.
         """
         public_name = name.lstrip("_")
-        if public_name in ("access_token", "id_token", "refresh_token", "token_type", "expires_in", "expires_at"):
+        if public_name in (
+            "access_token",
+            "id_token",
+            "refresh_token",
+            "token_type",
+            "issued_token_type",
+            "expires_in",
+            "expires_at",
+        ):
             object.__setattr__(self, public_name, value)
         else:
             object.__setattr__(self, name, value)
@@ -130,6 +147,7 @@ class IDaaSTokenResponse(IDaaSCredential):
             "id_token": self.id_token,
             "refresh_token": self.refresh_token,
             "token_type": self.token_type,
+            "issued_token_type": self.issued_token_type,
             "expires_in": self.expires_in,
             "expires_at": self.expires_at,
         }
@@ -150,6 +168,7 @@ class IDaaSTokenResponse(IDaaSCredential):
         token.id_token = data.get("id_token")
         token.refresh_token = data.get("refresh_token")
         token.token_type = data.get("token_type")
+        token.issued_token_type = data.get("issued_token_type")
         token.expires_in = data.get("expires_in", 0)
         token.expires_at = data.get("expires_at", 0)
         return token
@@ -164,8 +183,8 @@ class IDaaSTokenResponse(IDaaSCredential):
         return (
             f"IDaaSTokenResponse(access_token={self.access_token!r}, "
             f"id_token={self.id_token!r}, refresh_token={self.refresh_token!r}, "
-            f"token_type={self.token_type!r}, expires_in={self.expires_in}, "
-            f"expires_at={self.expires_at})"
+            f"token_type={self.token_type!r}, issued_token_type={self.issued_token_type!r}, "
+            f"expires_in={self.expires_in}, expires_at={self.expires_at})"
         )
 
     def __eq__(self, other) -> bool:
@@ -185,6 +204,7 @@ class IDaaSTokenResponse(IDaaSCredential):
             and self.id_token == other.id_token
             and self.refresh_token == other.refresh_token
             and self.token_type == other.token_type
+            and self.issued_token_type == other.issued_token_type
             and self.expires_in == other.expires_in
             and self.expires_at == other.expires_at
         )
@@ -197,5 +217,13 @@ class IDaaSTokenResponse(IDaaSCredential):
             Hash value.
         """
         return hash(
-            (self.access_token, self.id_token, self.refresh_token, self.token_type, self.expires_in, self.expires_at)
+            (
+                self.access_token,
+                self.id_token,
+                self.refresh_token,
+                self.token_type,
+                self.issued_token_type,
+                self.expires_in,
+                self.expires_at,
+            )
         )

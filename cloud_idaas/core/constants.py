@@ -80,10 +80,11 @@ class OAuth2Constants:
     X509_CERT_CHAINS = "client_x509_chain"
     SUBJECT_TOKEN = "subject_token"
     SUBJECT_TOKEN_TYPE = "subject_token_type"
-    SUBJECT_TOKEN_TYPE_VALUE = "urn:ietf:params:oauth:token-type:jwt"
+    ACCESS_TOKEN_TYPE_VALUE = "urn:ietf:params:oauth:token-type:access_token"
     REQUESTED_TOKEN_TYPE = "requested_token_type"
-    REQUESTED_TOKEN_TYPE_VALUE = "urn:ietf:params:oauth:token-type:access_token"
     AUDIENCE = "audience"
+    ACTOR_TOKEN = "actor_token"
+    ACTOR_TOKEN_TYPE = "actor_token_type"
 
 
 class HttpConstants:

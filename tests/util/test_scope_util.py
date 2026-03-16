@@ -1,3 +1,5 @@
+from cloud_idaas.core.constants import ErrorCode
+from cloud_idaas.core.exceptions import ConfigException
 from cloud_idaas.core.util.scope_util import ScopeUtil
 
 
@@ -94,3 +96,65 @@ class TestScopeUtil:
             """Test invalid scope with only pipe character."""
             result = ScopeUtil.is_valid_scope("|")
             assert result is False
+
+    class TestValidateScope:
+        """Test cases for validate_scope method."""
+
+        def test_valid_single_scope(self):
+            """Test valid single scope with audience."""
+            # Should not raise any exception
+            ScopeUtil.validate_scope("api://test|read")
+
+        def test_valid_multiple_scopes_same_audience(self):
+            """Test valid multiple scopes with same audience."""
+            # Should not raise any exception
+            ScopeUtil.validate_scope("api://test|read api://test|write")
+
+        def test_empty_scope_raises_exception(self):
+            """Test that empty scope raises ConfigException."""
+            import pytest
+
+            with pytest.raises(ConfigException) as exc_info:
+                ScopeUtil.validate_scope("")
+            assert exc_info.value.error_code == ErrorCode.INVALID_SCOPE
+            assert "empty" in str(exc_info.value).lower()
+
+        def test_none_scope_raises_exception(self):
+            """Test that None scope raises ConfigException."""
+            import pytest
+
+            with pytest.raises(ConfigException) as exc_info:
+                ScopeUtil.validate_scope(None)
+            assert exc_info.value.error_code == ErrorCode.INVALID_SCOPE
+
+        def test_whitespace_scope_raises_exception(self):
+            """Test that whitespace-only scope raises ConfigException."""
+            import pytest
+
+            with pytest.raises(ConfigException) as exc_info:
+                ScopeUtil.validate_scope("   ")
+            assert exc_info.value.error_code == ErrorCode.INVALID_SCOPE
+
+        def test_invalid_scope_format_raises_exception(self):
+            """Test that invalid scope format raises ConfigException."""
+            import pytest
+
+            with pytest.raises(ConfigException) as exc_info:
+                ScopeUtil.validate_scope("read write")
+            assert exc_info.value.error_code == ErrorCode.INVALID_SCOPE
+
+        def test_multiple_audiences_raises_exception(self):
+            """Test that multiple audiences raises ConfigException."""
+            import pytest
+
+            with pytest.raises(ConfigException) as exc_info:
+                ScopeUtil.validate_scope("api://service1|read api://service2|write")
+            assert exc_info.value.error_code == ErrorCode.MULTIPLE_AUDIENCE_NOT_SUPPORTED
+
+        def test_scope_with_empty_audience_raises_exception(self):
+            """Test that scope with empty audience raises ConfigException."""
+            import pytest
+
+            with pytest.raises(ConfigException) as exc_info:
+                ScopeUtil.validate_scope("|read")
+            assert exc_info.value.error_code == ErrorCode.INVALID_SCOPE

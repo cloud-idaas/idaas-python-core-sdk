@@ -261,28 +261,306 @@ class OAuth2TokenUtil:
         return cls._post_token_endpoint(form_body, token_endpoint)
 
     @classmethod
-    def token_exchange(cls, audience: str, subject_token: str, token_endpoint: str, scope: str) -> IDaaSTokenResponse:
+    def token_exchange_with_client_secret_basic(
+        cls,
+        client_id: str,
+        client_secret: str,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        token_endpoint: str,
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> IDaaSTokenResponse:
         """
-        Perform token exchange.
+        Perform token exchange with client_secret_basic authentication.
 
         Args:
-            audience: Audience for the exchanged token.
+            client_id: Client ID.
+            client_secret: Client secret.
             subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
             token_endpoint: Token endpoint URL.
             scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
 
         Returns:
             IDaaSTokenResponse.
         """
-        form_body = {
-            OAuth2Constants.GRANT_TYPE: [OAuth2Constants.TOKEN_EXCHANGE_GRANT_TYPE_VALUE],
-            OAuth2Constants.AUDIENCE: [audience],
-            OAuth2Constants.SUBJECT_TOKEN: [subject_token],
-            OAuth2Constants.SUBJECT_TOKEN_TYPE: [OAuth2Constants.SUBJECT_TOKEN_TYPE_VALUE],
-            OAuth2Constants.REQUESTED_TOKEN_TYPE: [OAuth2Constants.REQUESTED_TOKEN_TYPE_VALUE],
-            OAuth2Constants.SCOPE: [scope],
+        headers = {
+            HttpConstants.CONTENT_TYPE_HEADER: [str(ContentType.FORM)],
+            HttpConstants.AUTHORIZATION_HEADER: [
+                f"{HttpConstants.BASIC} {cls._base64_encode(f'{client_id}:{client_secret}')}"
+            ],
         }
+
+        form_body: dict = {OAuth2Constants.CLIENT_ID: [client_id]}
+        cls._add_token_exchange_form_body(
+            form_body, subject_token, subject_token_type, requested_token_type, scope, actor_token, actor_token_type
+        )
+
+        request = (
+            Builder()
+            .url(token_endpoint)
+            .http_method(HttpMethod.POST)
+            .headers(headers)
+            .form_body(form_body)
+            .content_type(ContentType.FORM)
+            .build()
+        )
+
+        http_client = HttpClientFactory.get_default_http_client()
+        response = http_client.send(request)
+        return JSONUtil.parse_object(response.body, IDaaSTokenResponse)
+
+    @classmethod
+    def token_exchange_with_client_secret_post(
+        cls,
+        client_id: str,
+        client_secret: str,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        token_endpoint: str,
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> IDaaSTokenResponse:
+        """
+        Perform token exchange with client_secret_post authentication.
+
+        Args:
+            client_id: Client ID.
+            client_secret: Client secret.
+            subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
+            token_endpoint: Token endpoint URL.
+            scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
+
+        Returns:
+            IDaaSTokenResponse.
+        """
+        form_body: dict = {
+            OAuth2Constants.CLIENT_ID: [client_id],
+            OAuth2Constants.CLIENT_SECRET: [client_secret],
+        }
+        cls._add_token_exchange_form_body(
+            form_body, subject_token, subject_token_type, requested_token_type, scope, actor_token, actor_token_type
+        )
         return cls._post_token_endpoint(form_body, token_endpoint)
+
+    @classmethod
+    def token_exchange_with_client_assertion(
+        cls,
+        client_id: str,
+        client_assertion: str,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        token_endpoint: str,
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> IDaaSTokenResponse:
+        """
+        Perform token exchange with client assertion (JWT) authentication.
+
+        Args:
+            client_id: Client ID.
+            client_assertion: Client assertion JWT.
+            subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
+            token_endpoint: Token endpoint URL.
+            scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
+
+        Returns:
+            IDaaSTokenResponse.
+        """
+        form_body: dict = {
+            OAuth2Constants.CLIENT_ID: [client_id],
+            OAuth2Constants.CLIENT_ASSERTION_TYPE: [ClientAssertionType.OAUTH_JWT_BEARER],
+            OAuth2Constants.CLIENT_ASSERTION: [client_assertion],
+        }
+        cls._add_token_exchange_form_body(
+            form_body, subject_token, subject_token_type, requested_token_type, scope, actor_token, actor_token_type
+        )
+        return cls._post_token_endpoint(form_body, token_endpoint)
+
+    @classmethod
+    def token_exchange_with_pkcs7(
+        cls,
+        client_id: str,
+        application_federated_credential_name: str,
+        pkcs7_attested_document: str,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        token_endpoint: str,
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> IDaaSTokenResponse:
+        """
+        Perform token exchange with PKCS7 attested document authentication.
+
+        Args:
+            client_id: Client ID.
+            application_federated_credential_name: Application federated credential name.
+            pkcs7_attested_document: PKCS7 attested document.
+            subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
+            token_endpoint: Token endpoint URL.
+            scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
+
+        Returns:
+            IDaaSTokenResponse.
+        """
+        form_body: dict = {
+            OAuth2Constants.CLIENT_ID: [client_id],
+            OAuth2Constants.APPLICATION_FEDERATED_CREDENTIAL_NAME: [application_federated_credential_name],
+            OAuth2Constants.CLIENT_ASSERTION_TYPE: [ClientAssertionType.PKCS7_BEARER],
+            OAuth2Constants.CLIENT_ASSERTION: [pkcs7_attested_document],
+        }
+        cls._add_token_exchange_form_body(
+            form_body, subject_token, subject_token_type, requested_token_type, scope, actor_token, actor_token_type
+        )
+        return cls._post_token_endpoint(form_body, token_endpoint)
+
+    @classmethod
+    def token_exchange_with_oidc(
+        cls,
+        client_id: str,
+        application_federated_credential_name: str,
+        oidc_token: str,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        token_endpoint: str,
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> IDaaSTokenResponse:
+        """
+        Perform token exchange with OIDC federated credential authentication.
+
+        Args:
+            client_id: Client ID.
+            application_federated_credential_name: Application federated credential name.
+            oidc_token: OIDC token.
+            subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
+            token_endpoint: Token endpoint URL.
+            scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
+
+        Returns:
+            IDaaSTokenResponse.
+        """
+        form_body: dict = {
+            OAuth2Constants.CLIENT_ID: [client_id],
+            OAuth2Constants.APPLICATION_FEDERATED_CREDENTIAL_NAME: [application_federated_credential_name],
+            OAuth2Constants.CLIENT_ASSERTION_TYPE: [ClientAssertionType.OIDC_BEARER],
+            OAuth2Constants.CLIENT_ASSERTION: [oidc_token],
+        }
+        cls._add_token_exchange_form_body(
+            form_body, subject_token, subject_token_type, requested_token_type, scope, actor_token, actor_token_type
+        )
+        return cls._post_token_endpoint(form_body, token_endpoint)
+
+    @classmethod
+    def token_exchange_with_pca(
+        cls,
+        client_id: str,
+        application_federated_credential_name: str,
+        client_x509_certificate: str,
+        x509_cert_chains: str,
+        client_assertion: str,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        token_endpoint: str,
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> IDaaSTokenResponse:
+        """
+        Perform token exchange with PCA (Private Certificate Authority) authentication.
+
+        Args:
+            client_id: Client ID.
+            application_federated_credential_name: Application federated credential name.
+            client_x509_certificate: Client X509 certificate.
+            x509_cert_chains: X509 certificate chains.
+            client_assertion: Client assertion JWT.
+            subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
+            token_endpoint: Token endpoint URL.
+            scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
+
+        Returns:
+            IDaaSTokenResponse.
+        """
+        form_body: dict = {
+            OAuth2Constants.CLIENT_ID: [client_id],
+            OAuth2Constants.APPLICATION_FEDERATED_CREDENTIAL_NAME: [application_federated_credential_name],
+            OAuth2Constants.CLIENT_ASSERTION_TYPE: [ClientAssertionType.PRIVATE_CA_JWT_BEARER],
+            OAuth2Constants.CLIENT_ASSERTION: [client_assertion],
+            OAuth2Constants.CLIENT_X509_CERTIFICATE: [client_x509_certificate],
+            OAuth2Constants.X509_CERT_CHAINS: [x509_cert_chains],
+        }
+        cls._add_token_exchange_form_body(
+            form_body, subject_token, subject_token_type, requested_token_type, scope, actor_token, actor_token_type
+        )
+        return cls._post_token_endpoint(form_body, token_endpoint)
+
+    @staticmethod
+    def _add_token_exchange_form_body(
+        form_body: dict,
+        subject_token: str,
+        subject_token_type: str,
+        requested_token_type: Optional[str],
+        scope: str,
+        actor_token: Optional[str] = None,
+        actor_token_type: Optional[str] = None,
+    ) -> None:
+        """
+        Add token exchange form body parameters.
+
+        Args:
+            form_body: Form body dict to add parameters to.
+            subject_token: Subject token to exchange.
+            subject_token_type: Type of the subject token.
+            requested_token_type: Optional. Type of token requested.
+            scope: OAuth scope.
+            actor_token: Optional. Actor token for delegation.
+            actor_token_type: Optional. Type of the actor token.
+        """
+        form_body[OAuth2Constants.GRANT_TYPE] = [OAuth2Constants.TOKEN_EXCHANGE_GRANT_TYPE_VALUE]
+        form_body[OAuth2Constants.SUBJECT_TOKEN] = [subject_token]
+        form_body[OAuth2Constants.SUBJECT_TOKEN_TYPE] = [subject_token_type]
+        if requested_token_type is not None:
+            form_body[OAuth2Constants.REQUESTED_TOKEN_TYPE] = [requested_token_type]
+        form_body[OAuth2Constants.SCOPE] = [scope]
+        if actor_token is not None:
+            form_body[OAuth2Constants.ACTOR_TOKEN] = [actor_token]
+            form_body[OAuth2Constants.ACTOR_TOKEN_TYPE] = [actor_token_type]
 
     @classmethod
     def get_device_code(cls, client_id: str, scope: str, device_authorization: str) -> DeviceCodeResponse:

@@ -11,6 +11,7 @@ from cloud_idaas.core.config.idaas_client_config import IDaaSClientConfig
 from cloud_idaas.core.constants import ErrorCode, HttpConstants, TokenAuthnMethod
 from cloud_idaas.core.credential import IDaaSTokenResponse
 from cloud_idaas.core.exceptions import CacheException, ConfigException
+from cloud_idaas.core.util.scope_util import ScopeUtil
 
 T = TypeVar("T")
 
@@ -75,11 +76,8 @@ class ValidatorUtil:
         ValidatorUtil.validate_config_not_none(
             idaas_client_config.token_endpoint, ErrorCode.TOKEN_ENDPOINT_NOT_FOUND, "Token Endpoint not found."
         )
-        ValidatorUtil.validate_config_not_none(
-            idaas_client_config.developer_api_endpoint,
-            ErrorCode.DEVELOPER_API_ENDPOINT_NOT_FOUND,
-            "Developer Api Endpoint not found.",
-        )
+        if idaas_client_config.scope:
+            ScopeUtil.validate_scope(idaas_client_config.scope)
 
     @staticmethod
     def validate_human_config(idaas_client_config: IDaaSClientConfig) -> None:

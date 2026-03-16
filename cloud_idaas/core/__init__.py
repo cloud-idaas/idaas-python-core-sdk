@@ -82,6 +82,8 @@ from cloud_idaas.core.implementation import (
     AbstractRefreshedCredentialProvider,
     IDaaSMachineCredentialProvider,
     IDaaSMachineCredentialProviderBuilder,
+    IDaaSMachineTokenExchangeCredentialProvider,
+    IDaaSMachineTokenExchangeCredentialProviderBuilder,
 )
 from cloud_idaas.core.implementation.authentication import (
     AlibabaCloudEcsAttestedDocumentProvider,
@@ -97,6 +99,7 @@ from cloud_idaas.core.implementation.authentication import (
 # Provider
 from cloud_idaas.core.provider import (
     IDaaSCredentialProvider,
+    IDaaSTokenExchangeCredentialProvider,
     JwtClientAssertionProvider,
     OidcTokenProvider,
     Pkcs7AttestedDocumentProvider,
@@ -183,6 +186,7 @@ __all__ = [
     "OAuth2TokenUtil",
     # Provider
     "IDaaSCredentialProvider",
+    "IDaaSTokenExchangeCredentialProvider",
     "JwtClientAssertionProvider",
     "OidcTokenProvider",
     "Pkcs7AttestedDocumentProvider",
@@ -194,6 +198,8 @@ __all__ = [
     "AbstractRefreshedCredentialProvider",
     "IDaaSMachineCredentialProvider",
     "IDaaSMachineCredentialProviderBuilder",
+    "IDaaSMachineTokenExchangeCredentialProvider",
+    "IDaaSMachineTokenExchangeCredentialProviderBuilder",
     # Implementation - Authentication
     "StaticClientSecretAssertionProvider",
     "StaticPrivateKeyAssertionProvider",
