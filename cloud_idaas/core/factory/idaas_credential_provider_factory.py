@@ -90,7 +90,8 @@ class IDaaSCredentialProviderFactory:
         scope = cls._idaas_client_config.scope
         if scope not in cls._credential_providers:
             cls._credential_providers[scope] = cls._create_credential_provider(scope)
-            cls._token_exchange_providers[scope] = cls._create_token_exchange_credential_provider(scope)
+            if cls._idaas_client_config.authn_configuration.authn_method != TokenAuthnMethod.PLUGIN:
+                cls._token_exchange_providers[scope] = cls._create_token_exchange_credential_provider(scope)
 
     @classmethod
     def _validate_client_config(cls, client_config: IDaaSClientConfig) -> None:

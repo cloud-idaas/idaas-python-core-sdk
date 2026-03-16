@@ -346,6 +346,20 @@ access_token = token_exchange_provider.get_issued_token(
 1. **Token Downscoping**: Exchange a token with broader permissions for one with limited scope
 2. **Service-to-Service Access**: Transfer the same user identity across services to obtain the required access token
 
+### Supported Authentication Methods
+
+Token Exchange supports the following authentication methods:
+
+- `CLIENT_SECRET_BASIC` - Client secret in HTTP Basic Auth header
+- `CLIENT_SECRET_POST` - Client secret in request body
+- `CLIENT_SECRET_JWT` - JWT assertion signed with client secret
+- `PRIVATE_KEY_JWT` - JWT assertion signed with private key
+- `PKCS7` - PKCS7 attested document
+- `OIDC` - OIDC token
+- `PCA` - X.509 certificate authentication
+
+**Note**: `PLUGIN` authentication method is currently not supported for Token Exchange.
+
 ## Support and Feedback
 
 - **Email**: cloudidaas@list.alibaba-inc.com

@@ -12,7 +12,6 @@ def token_exchange_sample():
     # Option 2: Get Token Exchange credential provider with scope specified by parameter
     # token_exchange_provider = IDaaSCredentialProviderFactory.get_token_exchange_credential_provider_by_scope("api://test|scope")
 
-
     # The subject token to exchange (obtained from another identity provider)
     subject_token = ""
 

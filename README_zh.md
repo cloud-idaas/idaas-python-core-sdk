@@ -346,6 +346,20 @@ access_token = token_exchange_provider.get_issued_token(
 1. **令牌降权**：将具有较大权限的令牌交换为具有较小权限（更窄 scope）的令牌
 2. **服务间调用**：同一用户身份在不同服务间传递，换取目标服务所需的访问令牌
 
+### 支持的认证方式
+
+令牌交换支持以下认证方式：
+
+- `CLIENT_SECRET_BASIC` - 客户端密钥通过 HTTP Basic Auth 头部发送
+- `CLIENT_SECRET_POST` - 客户端密钥通过请求体发送
+- `CLIENT_SECRET_JWT` - 使用客户端密钥签名的 JWT 断言
+- `PRIVATE_KEY_JWT` - 使用私钥签名的 JWT 断言
+- `PKCS7` - PKCS7 可信文档
+- `OIDC` - OIDC 令牌
+- `PCA` - X.509 证书认证
+
+**注意**：`PLUGIN` 认证方式目前不支持令牌交换。
+
 ## 支持与反馈
 
 - **邮箱**：cloudidaas@list.alibaba-inc.com
