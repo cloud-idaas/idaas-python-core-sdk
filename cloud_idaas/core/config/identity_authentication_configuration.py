@@ -249,8 +249,8 @@ class IdentityAuthenticationConfiguration:
                 normalized_key = StringUtil.camel_to_snake(key)
                 normalized_data[normalized_key] = value
 
-            # Handle identity_type (also supports legacy key: authentication_subject)
-            identity_value = normalized_data.get("identity_type") or normalized_data.get("authentication_subject")
+            # Handle identity_type
+            identity_value = normalized_data.get("identity_type")
             try:
                 authn_config.identity_type = AuthenticationIdentityEnum(identity_value)
             except ValueError:

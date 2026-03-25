@@ -243,6 +243,7 @@ class IDaaSCredentialProviderFactory:
         builder.scope(scope)
         builder.token_endpoint(config.token_endpoint)
         builder.authn_method(authn_method)
+        idaas_instance_id = config.idaas_instance_id
 
         # Configure based on authentication method
         if authn_method == TokenAuthnMethod.CLIENT_SECRET_BASIC or authn_method == TokenAuthnMethod.CLIENT_SECRET_POST:
@@ -291,7 +292,9 @@ class IDaaSCredentialProviderFactory:
 
             # Create attested document provider based on deployment environment
             if authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.ALIBABA_CLOUD_ECS:
-                attested_provider = AlibabaCloudEcsAttestedDocumentProvider()
+                attested_provider = (
+                    AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id(idaas_instance_id).build()
+                )
             elif authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.AWS_EC2:
                 attested_provider = AwsEc2Pkcs7AttestedDocumentProvider()
             else:
@@ -341,7 +344,9 @@ class IDaaSCredentialProviderFactory:
                 ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD, f"Unsupported authentication method: {authn_method}"
             )
 
-        return builder.build()
+        credential_provider = builder.build()
+        credential_provider.get_credential()
+        return credential_provider
 
     @classmethod
     def _create_token_exchange_credential_provider(cls, scope: str) -> IDaaSTokenExchangeCredentialProvider:
@@ -390,6 +395,7 @@ class IDaaSCredentialProviderFactory:
         builder.scope(scope)
         builder.token_endpoint(config.token_endpoint)
         builder.authn_method(authn_method)
+        idaas_instance_id = config.idaas_instance_id
 
         # Configure based on authentication method
         if authn_method == TokenAuthnMethod.CLIENT_SECRET_BASIC or authn_method == TokenAuthnMethod.CLIENT_SECRET_POST:
@@ -438,7 +444,9 @@ class IDaaSCredentialProviderFactory:
 
             # Create attested document provider based on deployment environment
             if authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.ALIBABA_CLOUD_ECS:
-                attested_provider = AlibabaCloudEcsAttestedDocumentProvider()
+                attested_provider = (
+                    AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id(idaas_instance_id).build()
+                )
             elif authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.AWS_EC2:
                 attested_provider = AwsEc2Pkcs7AttestedDocumentProvider()
             else:

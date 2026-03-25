@@ -6,7 +6,7 @@
     "scope": "urn:cloud:idaas:pam|cloud_account_role:obtain_access_credential",
     "developerApiEndpoint": "idaas.example.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "CLIENT_SECRET_POST",
         "clientSecretEnvVarName": "IDAAS_CLIENT_SECRET"
     },

@@ -39,38 +39,18 @@ class AlibabaCloudEcsAttestedDocumentProvider(AbstractRefreshedCredentialProvide
     metadata service.
     """
 
-    def __init__(
-        self,
-        idaas_instance_id: str,
-        meta_server_pkcs7_url_template: Optional[str] = None,
-        default_document_effective_seconds: int = 3600,
-        async_credential_update_enabled: bool = False,
-        stale_value_behavior: StaleValueBehavior = StaleValueBehavior.STRICT,
-    ):
+    def __init__(self, builder: "AlibabaCloudEcsAttestedDocumentProviderBuilder"):
         """
         Initialize the Alibaba Cloud ECS attested document provider.
 
         Args:
-            idaas_instance_id: The IDaaS instance ID.
-            meta_server_pkcs7_url_template: The metadata server URL template.
-            default_document_effective_seconds: Default document effective time in seconds.
-            async_credential_update_enabled: Whether to enable async credential update.
-            stale_value_behavior: Behavior when cached value is stale.
+            builder: The builder instance containing configuration.
         """
-        if StringUtil.is_empty(idaas_instance_id):
-            raise ValueError("idaasInstanceId cannot be empty")
+        super().__init__(builder._async_credential_update_enabled, builder._stale_value_behavior)
 
-        if meta_server_pkcs7_url_template is not None and StringUtil.is_empty(meta_server_pkcs7_url_template):
-            raise ValueError("metaServerUrl cannot be empty")
-
-        if default_document_effective_seconds <= 1200 or default_document_effective_seconds > 1314000:
-            raise ValueError("defaultDocumentEffectiveSeconds must be greater than 1200 and less than 1314000")
-
-        super().__init__(async_credential_update_enabled, stale_value_behavior)
-
-        self._meta_server_url_template = meta_server_pkcs7_url_template or ECS_META_SERVER_PKCS7_URL_TEMPLATE
-        self._idaas_instance_id = idaas_instance_id
-        self._default_document_effective_seconds = default_document_effective_seconds
+        self._meta_server_url_template = builder._meta_server_pkcs7_url_template or ECS_META_SERVER_PKCS7_URL_TEMPLATE
+        self._idaas_instance_id = builder._idaas_instance_id
+        self._default_document_effective_seconds = builder._default_document_effective_seconds
         self._signing_time = self._get_now()
 
     @property
@@ -193,7 +173,7 @@ class AlibabaCloudEcsAttestedDocumentProvider(AbstractRefreshedCredentialProvide
     @staticmethod
     def builder() -> "AlibabaCloudEcsAttestedDocumentProviderBuilder":
         """Create a new builder instance."""
-        return AlibabaCloudEcsAttestedDocumentProviderBuilder()
+        return AlibabaCloudEcsAttestedDocumentProviderBuilder._an_alibaba_cloud_ecs_attested_document_provider()
 
 
 class AlibabaCloudEcsAttestedDocumentProviderBuilder:
@@ -201,11 +181,16 @@ class AlibabaCloudEcsAttestedDocumentProviderBuilder:
 
     def __init__(self):
         """Initialize the builder."""
-        self._meta_server_pkcs7_url_template: Optional[str] = None
+        self._meta_server_pkcs7_url_template: str = ECS_META_SERVER_PKCS7_URL_TEMPLATE
         self._idaas_instance_id: Optional[str] = None
         self._default_document_effective_seconds = 3600
         self._async_credential_update_enabled = False
         self._stale_value_behavior = StaleValueBehavior.STRICT
+
+    @staticmethod
+    def _an_alibaba_cloud_ecs_attested_document_provider() -> "AlibabaCloudEcsAttestedDocumentProviderBuilder":
+        """Create a new builder instance."""
+        return AlibabaCloudEcsAttestedDocumentProviderBuilder()
 
     def meta_server_pkcs7_url_template(self, value: str) -> "AlibabaCloudEcsAttestedDocumentProviderBuilder":
         """Set the metadata server PKCS7 URL template."""
@@ -245,10 +230,6 @@ class AlibabaCloudEcsAttestedDocumentProviderBuilder:
         Returns:
             The configured AlibabaCloudEcsAttestedDocumentProvider instance.
         """
-        return AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id=self._idaas_instance_id,
-            meta_server_pkcs7_url_template=self._meta_server_pkcs7_url_template,
-            default_document_effective_seconds=self._default_document_effective_seconds,
-            async_credential_update_enabled=self._async_credential_update_enabled,
-            stale_value_behavior=self._stale_value_behavior,
-        )
+        if StringUtil.is_empty(self._idaas_instance_id):
+            raise ValueError("idaasInstanceId cannot be empty")
+        return AlibabaCloudEcsAttestedDocumentProvider(self)

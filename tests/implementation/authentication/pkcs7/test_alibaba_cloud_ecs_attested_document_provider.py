@@ -18,80 +18,104 @@ class TestAlibabaCloudEcsAttestedDocumentProvider:
 
     def test_initialization_with_required_params(self):
         """Test initialization with required parameters."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance_id")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance_id").build()
         assert provider.idaas_instance_id == "test_instance_id"
         assert provider.default_document_effective_seconds == 3600
         assert provider.signing_time is not None
 
     def test_initialization_with_custom_url_template(self):
         """Test initialization with custom URL template."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id="test_instance_id", meta_server_pkcs7_url_template="https://custom.com/pkcs7?aud=%s"
+        provider = (
+            AlibabaCloudEcsAttestedDocumentProvider.builder()
+            .idaas_instance_id("test_instance_id")
+            .meta_server_pkcs7_url_template("https://custom.com/pkcs7?aud=%s")
+            .build()
         )
         assert provider.meta_server_url_template == "https://custom.com/pkcs7?aud=%s"
 
     def test_initialization_with_custom_effective_seconds(self):
         """Test initialization with custom effective seconds."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id="test_instance_id", default_document_effective_seconds=7200
+        provider = (
+            AlibabaCloudEcsAttestedDocumentProvider.builder()
+            .idaas_instance_id("test_instance_id")
+            .default_document_effective_seconds(7200)
+            .build()
         )
         assert provider.default_document_effective_seconds == 7200
 
     def test_initialization_with_empty_instance_id_raises_error(self):
         """Test that empty instance_id raises ValueError."""
         with pytest.raises(ValueError, match="idaasInstanceId cannot be empty"):
-            AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="")
+            AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("").build()
 
     def test_initialization_with_none_instance_id_raises_error(self):
         """Test that None instance_id raises ValueError."""
         with pytest.raises(ValueError, match="idaasInstanceId cannot be empty"):
-            AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id=None)
+            AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id(None).build()
 
     def test_initialization_with_empty_url_template_raises_error(self):
         """Test that empty URL template raises ValueError."""
         with pytest.raises(ValueError, match="metaServerUrl cannot be empty"):
-            AlibabaCloudEcsAttestedDocumentProvider(
-                idaas_instance_id="test_instance", meta_server_pkcs7_url_template=""
+            (
+                AlibabaCloudEcsAttestedDocumentProvider.builder()
+                .idaas_instance_id("test_instance")
+                .meta_server_pkcs7_url_template("")
+                .build()
             )
 
     def test_initialization_with_effective_seconds_too_small_raises_error(self):
         """Test that effective seconds less than 1200 raises ValueError."""
         with pytest.raises(ValueError, match="defaultDocumentEffectiveSeconds must be greater than 1200"):
-            AlibabaCloudEcsAttestedDocumentProvider(
-                idaas_instance_id="test_instance", default_document_effective_seconds=1000
+            (
+                AlibabaCloudEcsAttestedDocumentProvider.builder()
+                .idaas_instance_id("test_instance")
+                .default_document_effective_seconds(1000)
+                .build()
             )
 
     def test_initialization_with_effective_seconds_too_large_raises_error(self):
         """Test that effective seconds greater than 1314000 raises ValueError."""
         with pytest.raises(ValueError, match="defaultDocumentEffectiveSeconds must be greater than 1200"):
-            AlibabaCloudEcsAttestedDocumentProvider(
-                idaas_instance_id="test_instance", default_document_effective_seconds=2000000
+            (
+                AlibabaCloudEcsAttestedDocumentProvider.builder()
+                .idaas_instance_id("test_instance")
+                .default_document_effective_seconds(2000000)
+                .build()
             )
 
     def test_initialization_with_boundary_effective_seconds(self):
         """Test initialization with boundary effective seconds values."""
         # Lower boundary
-        provider1 = AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id="test_instance", default_document_effective_seconds=1201
+        provider1 = (
+            AlibabaCloudEcsAttestedDocumentProvider.builder()
+            .idaas_instance_id("test_instance")
+            .default_document_effective_seconds(1201)
+            .build()
         )
         assert provider1.default_document_effective_seconds == 1201
 
         # Upper boundary
-        provider2 = AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id="test_instance", default_document_effective_seconds=1314000
+        provider2 = (
+            AlibabaCloudEcsAttestedDocumentProvider.builder()
+            .idaas_instance_id("test_instance")
+            .default_document_effective_seconds(1314000)
+            .build()
         )
         assert provider2.default_document_effective_seconds == 1314000
 
     def test_meta_server_url_template_property(self):
         """Test meta_server_url_template property."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id="test_instance", meta_server_pkcs7_url_template="https://custom.com/pkcs7?aud=%s"
+        provider = (
+            AlibabaCloudEcsAttestedDocumentProvider.builder()
+            .idaas_instance_id("test_instance")
+            .meta_server_pkcs7_url_template("https://custom.com/pkcs7?aud=%s")
+            .build()
         )
         assert provider.meta_server_url_template == "https://custom.com/pkcs7?aud=%s"
 
     def test_idaas_instance_id_property(self):
         """Test idaas_instance_id property getter and setter."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
         assert provider.idaas_instance_id == "test_instance"
 
         provider.idaas_instance_id = "new_instance_id"
@@ -99,7 +123,7 @@ class TestAlibabaCloudEcsAttestedDocumentProvider:
 
     def test_signing_time_property(self):
         """Test signing_time property getter and setter."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
         original_signing_time = provider.signing_time
         assert original_signing_time is not None
 
@@ -108,7 +132,7 @@ class TestAlibabaCloudEcsAttestedDocumentProvider:
 
     def test_default_document_effective_seconds_property(self):
         """Test default_document_effective_seconds property getter and setter."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
         assert provider.default_document_effective_seconds == 3600
 
         provider.default_document_effective_seconds = 7200
@@ -116,33 +140,36 @@ class TestAlibabaCloudEcsAttestedDocumentProvider:
 
     def test_get_now_returns_timestamp(self):
         """Test that _get_now returns a valid timestamp."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
         now = provider._get_now()
         assert isinstance(now, int)
         assert now > 0
 
     def test_is_async_credential_update_enabled(self):
         """Test async credential update enabled flag."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(
-            idaas_instance_id="test_instance", async_credential_update_enabled=True
+        provider = (
+            AlibabaCloudEcsAttestedDocumentProvider.builder()
+            .idaas_instance_id("test_instance")
+            .async_credential_update_enabled(True)
+            .build()
         )
         assert provider.is_async_credential_update_enabled()
 
     def test_get_cached_result_supplier(self):
         """Test getting cached result supplier."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
         supplier = provider.get_cached_result_supplier()
         assert supplier is not None
 
     def test_close(self):
         """Test closing the provider."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
         provider.close()
         # Should not raise an exception
 
     def test_context_manager(self):
         """Test using provider as context manager."""
-        with AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance") as provider:
+        with AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build() as provider:
             assert provider is not None
 
     @patch(
@@ -164,14 +191,14 @@ class TestAlibabaCloudEcsAttestedDocumentProvider:
 
         mock_http_client.send.side_effect = [mock_token_response, mock_doc_response]
 
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
 
         result = provider._refresh_credential()
         assert result.value == "test_pkcs7_document"
 
     def test_get_attested_document(self):
         """Test getting attested document."""
-        provider = AlibabaCloudEcsAttestedDocumentProvider(idaas_instance_id="test_instance")
+        provider = AlibabaCloudEcsAttestedDocumentProvider.builder().idaas_instance_id("test_instance").build()
 
         # This will try to fetch from HTTP, which we'll mock
         with patch.object(provider, "_refresh_credential") as mock_refresh:

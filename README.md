@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 [![Development Status](https://img.shields.io/badge/status-Beta-orange)](https://pypi.org/project/cloud-idaas-core/)
 
-[简体中文](README_zh.md)
+[简体中文](README_zh.md) | English
 
 Python SDK for IDaaS (Identity as a Service) M2M product, providing developers with convenient machine-to-machine authentication capabilities.
 
@@ -49,7 +49,7 @@ Create a configuration file `~/.cloud_idaas/client_config.json`:
     "scope": "your-requested-scope",
     "developerApiEndpoint": "your-developer-api-endpoint",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "CLIENT_SECRET_POST",
         "clientSecretEnvVarName": "IDAAS_CLIENT_SECRET"
     }
@@ -94,15 +94,15 @@ The SDK searches for configuration files in the following order:
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer":"https://xxx/api/v2/iauths_system/oauth2",               
     "tokenEndpoint": "https://xxx/api/v2/iauths_system/oauth2/token",
     "scope": "api.example.com|read:file",
     "openApiEndpoint":"eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint":"eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "CLIENT_SECRET_POST",
         "clientSecretEnvVarName": "IDAAS_CLIENT_SECRET"
     },
@@ -155,15 +155,15 @@ Use Client Secret for authentication. Supports `CLIENT_SECRET_BASIC`, `CLIENT_SE
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer": "your-idaas-issuer-url",
     "tokenEndpoint": "your-idaas-token-endpoint",
     "scope": "your-requested-scope",
     "openApiEndpoint": "eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint": "eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "CLIENT_SECRET_POST",
         "clientSecretEnvVarName": "IDAAS_CLIENT_SECRET"
     },
@@ -180,15 +180,15 @@ Use private key for authentication, offering higher security.
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer": "your-idaas-issuer-url",
     "tokenEndpoint": "your-idaas-token-endpoint",
     "scope": "your-requested-scope",
     "openApiEndpoint": "eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint": "eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "PRIVATE_KEY_JWT",
         "privateKeyEnvVarName": "IDAAS_PRIVATE_KEY"
     },
@@ -205,15 +205,15 @@ Use PKCS7 attested document for authentication in cloud environments.
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer": "your-idaas-issuer-url",
     "tokenEndpoint": "your-idaas-token-endpoint",
     "scope": "your-requested-scope",
     "openApiEndpoint": "eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint": "eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "PKCS7",
         "applicationFederatedCredentialName": "your-pkcs7-credential-name",
         "clientDeployEnvironment": "ALIBABA_CLOUD_ECS"
@@ -231,15 +231,15 @@ Use OIDC token for authentication.
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer": "your-idaas-issuer-url",
     "tokenEndpoint": "your-idaas-token-endpoint",
     "scope": "your-requested-scope",
     "openApiEndpoint": "eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint": "eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "OIDC",
         "applicationFederatedCredentialName": "your-oidc-credential-name",
         "clientDeployEnvironment": "KUBERNETES"
@@ -257,15 +257,15 @@ Use X.509 certificate for authentication.
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer": "your-idaas-issuer-url",
     "tokenEndpoint": "your-idaas-token-endpoint",
     "scope": "your-requested-scope",
     "openApiEndpoint": "eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint": "eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "PCA",
         "clientX509Certificate": "-----BEGIN CERTIFICATE-----\nxxx\n-----END CERTIFICATE-----",
         "x509CertChains": "-----BEGIN CERTIFICATE-----\nxxx\n-----END CERTIFICATE-----",
@@ -284,15 +284,15 @@ Use plugin-based credential provider for authentication.
 
 ```json
 {
-    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx"
-    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx"
+    "idaasInstanceId": "idaas_ue2jvisn35ea5lmthk267xxxxx",
+    "clientId": "app_mkv7rgt4d7i4u7zqtzev2mxxxx",
     "issuer": "your-idaas-issuer-url",
     "tokenEndpoint": "your-idaas-token-endpoint",
     "scope": "your-requested-scope",
     "openApiEndpoint": "eiam.[region_id].aliyuncs.com",
     "developerApiEndpoint": "eiam-developerapi.[region_id].aliyuncs.com",
     "authnConfiguration": {
-        "authenticationSubject": "CLIENT",
+        "identityType": "CLIENT",
         "authnMethod": "PLUGIN",
         "pluginName": "alibabacloudPluginCredentialProvider"
     },

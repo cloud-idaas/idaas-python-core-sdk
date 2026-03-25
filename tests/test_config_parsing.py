@@ -44,7 +44,7 @@ def test_idaas_client_config_from_dict():
         "scope": "urn:cloud:idaas:pam|cloud_account_role:obtain_access_credential",
         "developerApiEndpoint": "eiam-developerapi.cn-hangzhou.aliyuncs.com",
         "authnConfiguration": {
-            "authenticationSubject": "CLIENT",
+            "identityType": "CLIENT",
             "authnMethod": "CLIENT_SECRET_POST",
             "clientSecretEnvVarName": "IDAAS_CLIENT_SECRET",
         },

@@ -110,10 +110,12 @@ class StringUtil:
         if camel_str is None:
             return None
 
+        # Handle number to letter transitions first (e.g., "x509Cert" -> "x509_Cert")
+        result = re.sub(r"([0-9])([A-Z])", r"\1_\2", camel_str)
         # Insert underscore before uppercase letters that are followed by lowercase letters
         # or before uppercase letters that are preceded by lowercase letters
         # This handles cases like "idaasInstanceId" -> "idaas_instance_id"
-        result = re.sub(r"([a-z])([A-Z])", r"\1_\2", camel_str)
+        result = re.sub(r"([a-z])([A-Z])", r"\1_\2", result)
         # Handle consecutive uppercase letters (e.g., "HTTPServer" -> "HTTP_Server")
         result = re.sub(r"([A-Z])([A-Z][a-z])", r"\1_\2", result)
         return result.lower()

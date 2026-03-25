@@ -1,4 +1,5 @@
 import logging
+import sys
 from importlib.metadata import entry_points
 from typing import Optional
 
@@ -18,7 +19,12 @@ class PluginCredentialProviderUtil:
         if cls._plugin_credential_provider_dict:
             return
         cls._plugin_credential_provider_dict = {}
-        eps = entry_points().get(PluginConstants.PLUGIN_GROUP_NAME, [])
+        # Python 3.10+ uses entry_points(group=...)
+        # Python 3.9 uses entry_points().get(group, [])
+        if sys.version_info >= (3, 10):
+            eps = entry_points(group=PluginConstants.PLUGIN_GROUP_NAME)
+        else:
+            eps = entry_points().get(PluginConstants.PLUGIN_GROUP_NAME, [])
         for ep in eps:
             try:
                 # load plugin class

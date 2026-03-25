@@ -51,6 +51,23 @@ class TestIdentityAuthenticationConfiguration(unittest.TestCase):
         self.assertEqual(config.client_x509_certificate, "cert-data")
         self.assertEqual(config.x509_cert_chains, "chain-data")
 
+    def test_from_dict_with_camel_case_x509_fields(self):
+        """Test from_dict with camelCase x509 certificate fields"""
+        data = {
+            "clientDeployEnvironment": "KUBERNETES",
+            "authnMethod": "PCA",
+            "applicationFederatedCredentialName": "my-credential",
+            "clientX509Certificate": "cert-data-camel",  # camelCase
+            "x509CertChains": "chain-data-camel",  # camelCase
+        }
+
+        config = IdentityAuthenticationConfiguration.from_dict(data)
+        self.assertEqual(config.client_deploy_environment, ClientDeployEnvironmentEnum.KUBERNETES)
+        self.assertEqual(config.authn_method, TokenAuthnMethod.PCA)
+        self.assertEqual(config.application_federated_credential_name, "my-credential")
+        self.assertEqual(config.client_x509_certificate, "cert-data-camel")
+        self.assertEqual(config.x509_cert_chains, "chain-data-camel")
+
     def test_from_dict_with_snake_case(self):
         """Test from_dict with snake_case keys"""
         data = {
