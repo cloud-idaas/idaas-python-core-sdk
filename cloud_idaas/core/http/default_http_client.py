@@ -2,6 +2,7 @@
 IDaaS Python SDK - Default HTTP Client Implementation
 """
 
+import os
 import socket
 import ssl
 from typing import Optional
@@ -20,6 +21,48 @@ from cloud_idaas.core.http.http_response import HttpResponse
 from cloud_idaas.core.util.json_util import JSONUtil
 
 
+def _get_ca_bundle() -> Optional[str]:
+    """
+    Get the CA bundle path.
+
+    Tries to find CA certificates in the following order:
+    1. Environment variable SSL_CERT_FILE
+    2. certifi package (if installed)
+    3. System CA bundle (common paths)
+    4. None (use system default)
+
+    Returns:
+        Path to CA bundle or None to use system default.
+    """
+    # 1. Check environment variable first
+    env_cert = os.environ.get("SSL_CERT_FILE") or os.environ.get("REQUESTS_CA_BUNDLE")
+    if env_cert and os.path.exists(env_cert):
+        return env_cert
+
+    # 2. Try certifi
+    try:
+        import certifi
+
+        return certifi.where()
+    except ImportError:
+        pass
+
+    # 3. Common system CA bundle paths
+    system_paths = [
+        "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",  # RHEL/CentOS with update-ca-trust
+        "/etc/pki/tls/certs/ca-bundle.crt",  # RHEL/CentOS/Fedora
+        "/etc/ssl/certs/ca-certificates.crt",  # Debian/Ubuntu
+        "/etc/ssl/ca-bundle.pem",  # OpenSUSE
+        "/etc/ssl/cert.pem",  # macOS/BSD
+    ]
+
+    for path in system_paths:
+        if os.path.exists(path):
+            return path
+
+    return None
+
+
 class DefaultHttpClient(HttpClient):
     """
     Default HTTP client implementation using urllib3.
@@ -35,11 +78,20 @@ class DefaultHttpClient(HttpClient):
         """
         self._connect_timeout = connect_timeout / 1000.0
         self._read_timeout = read_timeout / 1000.0
-        self._http = urllib3.PoolManager(
-            timeout=urllib3.Timeout(connect=self._connect_timeout, read=self._read_timeout),
-            retries=False,
-            cert_reqs=ssl.CERT_REQUIRED,
-        )
+
+        # Build PoolManager kwargs
+        pool_kwargs = {
+            "timeout": urllib3.Timeout(connect=self._connect_timeout, read=self._read_timeout),
+            "retries": False,
+            "cert_reqs": ssl.CERT_REQUIRED,
+        }
+
+        # Try to find CA bundle
+        ca_bundle = _get_ca_bundle()
+        if ca_bundle:
+            pool_kwargs["ca_certs"] = ca_bundle
+
+        self._http = urllib3.PoolManager(**pool_kwargs)
 
     def send(self, request: HttpRequest) -> HttpResponse:
         """
@@ -88,7 +140,11 @@ class DefaultHttpClient(HttpClient):
 
         if request.headers:
             for key, values in request.headers.items():
-                headers[key] = ",".join(values) if values else ""
+                # Support both list and string values
+                if isinstance(values, list):
+                    headers[key] = ",".join(values) if values else ""
+                else:
+                    headers[key] = str(values)
 
         if request.content_type:
             headers[HttpConstants.CONTENT_TYPE_HEADER] = str(request.content_type)
