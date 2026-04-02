@@ -59,6 +59,7 @@ from cloud_idaas.core.exceptions import (
     EncodingException,
     HttpException,
     IDaaSException,
+    IDaaSUnexpectedException,
     ServerException,
 )
 
@@ -84,6 +85,8 @@ from cloud_idaas.core.implementation import (
     IDaaSMachineCredentialProviderBuilder,
     IDaaSMachineTokenExchangeCredentialProvider,
     IDaaSMachineTokenExchangeCredentialProviderBuilder,
+    StaticIDaaSCredentialProvider,
+    StaticIDaaSCredentialProviderBuilder,
 )
 from cloud_idaas.core.implementation.authentication import (
     AlibabaCloudEcsAttestedDocumentProvider,
@@ -114,6 +117,7 @@ from cloud_idaas.core.util import (
     ExceptionAnalyzer,
     FileUtil,
     JSONUtil,
+    NormalizeUtil,
     PkiUtil,
     PluginCredentialProviderUtil,
     RequestUtil,
@@ -156,6 +160,7 @@ __all__ = [
     "CredentialException",
     "EncodingException",
     "HttpException",
+    "IDaaSUnexpectedException",
     # Credential
     "IDaaSCredential",
     "IDaaSTokenResponse",
@@ -200,6 +205,8 @@ __all__ = [
     "IDaaSMachineCredentialProviderBuilder",
     "IDaaSMachineTokenExchangeCredentialProvider",
     "IDaaSMachineTokenExchangeCredentialProviderBuilder",
+    "StaticIDaaSCredentialProvider",
+    "StaticIDaaSCredentialProviderBuilder",
     # Implementation - Authentication
     "StaticClientSecretAssertionProvider",
     "StaticPrivateKeyAssertionProvider",
@@ -221,4 +228,5 @@ __all__ = [
     "ValidatorUtil",
     "ScopeUtil",
     "PluginCredentialProviderUtil",
+    "NormalizeUtil",
 ]

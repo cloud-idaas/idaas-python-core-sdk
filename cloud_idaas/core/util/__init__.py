@@ -11,6 +11,7 @@ from cloud_idaas.core.util.config_reader import ConfigReader
 from cloud_idaas.core.util.exception_analyzer import ExceptionAnalyzer
 from cloud_idaas.core.util.file_util import FileUtil
 from cloud_idaas.core.util.json_util import JSONUtil
+from cloud_idaas.core.util.normalize_util import NormalizeUtil
 from cloud_idaas.core.util.pki_util import PkiUtil
 from cloud_idaas.core.util.plugin_credential_provider_util import PluginCredentialProviderUtil
 from cloud_idaas.core.util.request_util import RequestUtil
@@ -31,4 +32,5 @@ __all__ = [
     "ConfigReader",
     "ScopeUtil",
     "PluginCredentialProviderUtil",
+    "NormalizeUtil",
 ]

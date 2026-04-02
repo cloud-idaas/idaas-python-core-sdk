@@ -3,7 +3,7 @@ import time
 from cloud_idaas.core.factory import IDaaSCredentialProviderFactory
 
 
-def loopSample():
+def loop_sample():
     while True:
         print("access token:")
         credential_provider_pam = IDaaSCredentialProviderFactory.get_idaas_credential_provider()
@@ -14,4 +14,4 @@ def loopSample():
 
 if __name__ == "__main__":
     IDaaSCredentialProviderFactory.init()
-    loopSample()
+    loop_sample()

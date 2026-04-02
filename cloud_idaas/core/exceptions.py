@@ -152,3 +152,31 @@ class HttpException(IDaaSException):
 
     def __init__(self, error_message: Optional[str] = None, cause: Optional[Exception] = None):
         super().__init__(error_message, cause)
+
+
+class IDaaSUnexpectedException(Exception):
+    """
+    Exception thrown when an unexpected error occurs.
+
+    This is a runtime exception for unexpected situations that are not
+    covered by other exception types.
+    """
+
+    def __init__(
+        self,
+        message: Optional[str] = None,
+        error_code: Optional[str] = None,
+        cause: Optional[Exception] = None,
+    ):
+        """
+        Initialize the exception.
+
+        Args:
+            message: The error message.
+            error_code: Optional error code.
+            cause: Optional cause of the exception.
+        """
+        super().__init__(message)
+        self.error_code = error_code
+        self.error_message = message
+        self.cause = cause

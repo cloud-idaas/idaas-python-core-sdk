@@ -13,6 +13,10 @@ from cloud_idaas.core.implementation.idaas_machine_token_exchange_credential_pro
     IDaaSMachineTokenExchangeCredentialProvider,
     IDaaSMachineTokenExchangeCredentialProviderBuilder,
 )
+from cloud_idaas.core.implementation.static_idaas_credential_provider import (
+    StaticIDaaSCredentialProvider,
+    StaticIDaaSCredentialProviderBuilder,
+)
 
 __all__ = [
     "AbstractRefreshedCredentialProvider",
@@ -20,4 +24,6 @@ __all__ = [
     "IDaaSMachineCredentialProviderBuilder",
     "IDaaSMachineTokenExchangeCredentialProvider",
     "IDaaSMachineTokenExchangeCredentialProviderBuilder",
+    "StaticIDaaSCredentialProvider",
+    "StaticIDaaSCredentialProviderBuilder",
 ]

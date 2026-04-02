@@ -7,10 +7,10 @@ def token_exchange_sample():
     IDaaSCredentialProviderFactory.init()
 
     # Option 1: Get Token Exchange credential provider with scope from config file
-    token_exchange_provider = IDaaSCredentialProviderFactory.get_token_exchange_credential_provider()
+    token_exchange_provider = IDaaSCredentialProviderFactory.get_idaas_token_exchange_credential_provider()
 
     # Option 2: Get Token Exchange credential provider with scope specified by parameter
-    # token_exchange_provider = IDaaSCredentialProviderFactory.get_token_exchange_credential_provider_by_scope("api://test|scope")
+    # token_exchange_provider = IDaaSCredentialProviderFactory.get_idaas_token_exchange_credential_provider_by_scope("api://test|scope")
 
     # The subject token to exchange (obtained from another identity provider)
     subject_token = ""

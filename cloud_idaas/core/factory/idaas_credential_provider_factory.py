@@ -14,7 +14,7 @@ from cloud_idaas.core.constants import (
 )
 from cloud_idaas.core.exceptions import ConfigException
 from cloud_idaas.core.provider import IDaaSCredentialProvider, IDaaSTokenExchangeCredentialProvider, OidcTokenProvider
-from cloud_idaas.core.util import JSONUtil, ScopeUtil, TokenAuthnMethod, ValidatorUtil
+from cloud_idaas.core.util import JSONUtil, NormalizeUtil, ScopeUtil, TokenAuthnMethod, ValidatorUtil
 from cloud_idaas.core.util.config_reader import ConfigReader
 
 logger = logging.getLogger(__name__)
@@ -50,6 +50,7 @@ class IDaaSCredentialProviderFactory:
             cls._idaas_client_config.assign(config_data)
             cls._validate_client_config(cls._idaas_client_config)
             cls._validate_http_config(cls._idaas_client_config.http_configuration)
+            cls._normalize_config(cls._idaas_client_config)
             cls._initialized = True
         except Exception as e:
             logger.error("IDaaS Credential Provider Factory init failed. cause: %s: %s", type(e).__name__, e)
@@ -73,6 +74,7 @@ class IDaaSCredentialProviderFactory:
 
         cls._idaas_client_config.assign(authentication_config)
         cls._validate_client_config(cls._idaas_client_config)
+        cls._normalize_config(cls._idaas_client_config)
         cls._initialized = True
 
     @classmethod
@@ -117,6 +119,16 @@ class IDaaSCredentialProviderFactory:
         ValidatorUtil.validate_http_config(http_configuration)
 
     @classmethod
+    def _normalize_config(cls, client_config: IDaaSClientConfig) -> None:
+        """
+        Normalize configuration values.
+
+        Args:
+            client_config: The client configuration to normalize.
+        """
+        NormalizeUtil.normalize_endpoints(client_config)
+
+    @classmethod
     def get_idaas_credential_provider(cls) -> IDaaSCredentialProvider:
         """
         Get the default IDaaS credential provider.
@@ -157,7 +169,7 @@ class IDaaSCredentialProviderFactory:
         return cls._credential_providers[scope]
 
     @classmethod
-    def get_token_exchange_credential_provider(cls) -> IDaaSTokenExchangeCredentialProvider:
+    def get_idaas_token_exchange_credential_provider(cls) -> IDaaSTokenExchangeCredentialProvider:
         """
         Get the default Token Exchange credential provider.
 
@@ -167,10 +179,10 @@ class IDaaSCredentialProviderFactory:
         Raises:
             ConfigException: If factory has not been initialized.
         """
-        return cls.get_token_exchange_credential_provider_by_scope(cls._idaas_client_config.scope)
+        return cls.get_idaas_token_exchange_credential_provider_by_scope(cls._idaas_client_config.scope)
 
     @classmethod
-    def get_token_exchange_credential_provider_by_scope(cls, scope: str) -> IDaaSTokenExchangeCredentialProvider:
+    def get_idaas_token_exchange_credential_provider_by_scope(cls, scope: str) -> IDaaSTokenExchangeCredentialProvider:
         """
         Get the Token Exchange credential provider for a specific scope.
 
@@ -217,9 +229,6 @@ class IDaaSCredentialProviderFactory:
             StaticPrivateKeyAssertionProvider,
         )
         from cloud_idaas.core.implementation.authentication.oidc.file_oidc_token_provider import FileOidcTokenProvider
-        from cloud_idaas.core.implementation.authentication.oidc.static_oidc_token_provider import (
-            StaticOidcTokenProvider,
-        )
         from cloud_idaas.core.implementation.authentication.pkcs7.alibaba_cloud_ecs_attested_document_provider import (
             AlibabaCloudEcsAttestedDocumentProvider,
         )
@@ -306,17 +315,22 @@ class IDaaSCredentialProviderFactory:
             # OIDC token
             builder.application_federated_credential_name(authn_config.application_federated_credential_name)
 
-            # Create OIDC token provider
-            if authn_config.oidc_token_file_path_env_var_name:
-                token_file_path = os.environ.get(authn_config.oidc_token_file_path_env_var_name)
-                if token_file_path:
-                    oidc_provider = FileOidcTokenProvider(token_file_path)
-                else:
-                    oidc_provider = StaticOidcTokenProvider()
-            elif authn_config.oidc_token_file_path:
-                oidc_provider = FileOidcTokenProvider(authn_config.oidc_token_file_path)
+            # Create OIDC token provider based on deployment environment
+            if authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.KUBERNETES:
+                # Kubernetes environment - use service account token
+                oidc_token_file_path = authn_config.oidc_token_file_path
+                if not oidc_token_file_path and authn_config.oidc_token_file_path_env_var_name:
+                    oidc_token_file_path = os.environ.get(authn_config.oidc_token_file_path_env_var_name)
+                if not oidc_token_file_path:
+                    from cloud_idaas.core.constants import AuthenticationConstants
+
+                    oidc_token_file_path = AuthenticationConstants.KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH
+                oidc_provider = FileOidcTokenProvider(oidc_token_file_path)
             else:
-                oidc_provider = StaticOidcTokenProvider()
+                raise ConfigException(
+                    ErrorCode.UNSUPPORTED_CLIENT_DEPLOY_ENVIRONMENT,
+                    f"Unsupported client deploy environment: {authn_config.client_deploy_environment}",
+                )
             builder.oidc_token_provider(oidc_provider)
 
         elif authn_method == TokenAuthnMethod.PCA:
@@ -369,9 +383,6 @@ class IDaaSCredentialProviderFactory:
             StaticPrivateKeyAssertionProvider,
         )
         from cloud_idaas.core.implementation.authentication.oidc.file_oidc_token_provider import FileOidcTokenProvider
-        from cloud_idaas.core.implementation.authentication.oidc.static_oidc_token_provider import (
-            StaticOidcTokenProvider,
-        )
         from cloud_idaas.core.implementation.authentication.pkcs7.alibaba_cloud_ecs_attested_document_provider import (
             AlibabaCloudEcsAttestedDocumentProvider,
         )
@@ -458,17 +469,22 @@ class IDaaSCredentialProviderFactory:
             # OIDC token
             builder.application_federated_credential_name(authn_config.application_federated_credential_name)
 
-            # Create OIDC token provider
-            if authn_config.oidc_token_file_path_env_var_name:
-                token_file_path = os.environ.get(authn_config.oidc_token_file_path_env_var_name)
-                if token_file_path:
-                    oidc_provider = FileOidcTokenProvider(token_file_path)
-                else:
-                    oidc_provider = StaticOidcTokenProvider()
-            elif authn_config.oidc_token_file_path:
-                oidc_provider = FileOidcTokenProvider(authn_config.oidc_token_file_path)
+            # Create OIDC token provider based on deployment environment
+            if authn_config.client_deploy_environment == ClientDeployEnvironmentEnum.KUBERNETES:
+                # Kubernetes environment - use service account token
+                oidc_token_file_path = authn_config.oidc_token_file_path
+                if not oidc_token_file_path and authn_config.oidc_token_file_path_env_var_name:
+                    oidc_token_file_path = os.environ.get(authn_config.oidc_token_file_path_env_var_name)
+                if not oidc_token_file_path:
+                    from cloud_idaas.core.constants import AuthenticationConstants
+
+                    oidc_token_file_path = AuthenticationConstants.KUBERNETES_SERVICE_ACCOUNT_TOKEN_PATH
+                oidc_provider = FileOidcTokenProvider(oidc_token_file_path)
             else:
-                oidc_provider = StaticOidcTokenProvider()
+                raise ConfigException(
+                    ErrorCode.UNSUPPORTED_CLIENT_DEPLOY_ENVIRONMENT,
+                    f"Unsupported client deploy environment: {authn_config.client_deploy_environment}",
+                )
             builder.oidc_token_provider(oidc_provider)
 
         elif authn_method == TokenAuthnMethod.PCA:

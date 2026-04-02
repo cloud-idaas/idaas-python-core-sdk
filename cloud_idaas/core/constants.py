@@ -92,7 +92,9 @@ class HttpConstants:
     Constants for HTTP protocol.
     """
 
+    HTTP = "http"
     HTTPS = "https"
+    SCHEME_SEPARATOR = "://"
     AUTHORIZATION_HEADER = "Authorization"
     CONTENT_TYPE_HEADER = "Content-Type"
     BEARER = "Bearer"

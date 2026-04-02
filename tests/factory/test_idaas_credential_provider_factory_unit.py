@@ -484,17 +484,17 @@ class TestIDaaSCredentialProviderFactory(unittest.TestCase):
 
         self.assertEqual(context.exception.error_code, ErrorCode.UNSUPPORTED_AUTHENTICATION_METHOD)
 
-    def test_get_token_exchange_credential_provider_before_init_raises_exception(self):
-        """Test get_token_exchange_credential_provider raises exception before initialization."""
+    def test_get_idaas_token_exchange_credential_provider_before_init_raises_exception(self):
+        """Test get_idaas_token_exchange_credential_provider raises exception before initialization."""
         with self.assertRaises(ConfigException) as context:
-            IDaaSCredentialProviderFactory.get_token_exchange_credential_provider()
+            IDaaSCredentialProviderFactory.get_idaas_token_exchange_credential_provider()
 
         self.assertEqual(context.exception.error_code, ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT)
 
-    def test_get_token_exchange_credential_provider_by_scope_before_init_raises_exception(self):
-        """Test get_token_exchange_credential_provider_by_scope raises exception before initialization."""
+    def test_get_idaas_token_exchange_credential_provider_by_scope_before_init_raises_exception(self):
+        """Test get_idaas_token_exchange_credential_provider_by_scope raises exception before initialization."""
         with self.assertRaises(ConfigException) as context:
-            IDaaSCredentialProviderFactory.get_token_exchange_credential_provider_by_scope("api://test|scope")
+            IDaaSCredentialProviderFactory.get_idaas_token_exchange_credential_provider_by_scope("api://test|scope")
 
         self.assertEqual(context.exception.error_code, ErrorCode.IDAAS_CREDENTIAL_PROVIDER_FACTORY_NOT_INIT)
 
