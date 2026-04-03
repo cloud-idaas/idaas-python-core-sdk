@@ -99,12 +99,26 @@ class StaticPrivateKeyAssertionProvider(JwtClientAssertionProvider):
                 "exp": int((now + timedelta(minutes=10)).timestamp()),
             }
 
-            # Determine algorithm based on key type
+            # Determine algorithm based on key type and size/curve
             algorithm = None
             if isinstance(self._private_key, rsa.RSAPrivateKey):
-                algorithm = "RS256"
+                key_size = self._private_key.key_size
+                if key_size <= 2048:
+                    algorithm = "RS256"
+                elif key_size <= 3072:
+                    algorithm = "RS384"
+                else:
+                    algorithm = "RS512"
             elif isinstance(self._private_key, ec.EllipticCurvePrivateKey):
-                algorithm = "ES256"
+                curve = self._private_key.curve
+                if isinstance(curve, ec.SECP256R1):
+                    algorithm = "ES256"
+                elif isinstance(curve, ec.SECP384R1):
+                    algorithm = "ES384"
+                elif isinstance(curve, ec.SECP521R1):
+                    algorithm = "ES512"
+                else:
+                    raise CredentialException(ErrorCode.NOT_SUPPORTED_WEB_KEY, f"Unsupported EC curve: {curve.name}")
             else:
                 raise CredentialException(
                     ErrorCode.NOT_SUPPORTED_WEB_KEY, f"Not supported web key: {type(self._private_key)}"

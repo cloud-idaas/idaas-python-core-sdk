@@ -179,3 +179,160 @@ class TestStaticPrivateKeyAssertionProvider:
         )
 
         return StaticPrivateKeyAssertionProvider(pem.decode())
+
+
+class TestStaticPrivateKeyAssertionProviderAlgorithms:
+    """Test cases for different key algorithms and curves."""
+
+    def test_rsa_2048_uses_rs256_algorithm(self):
+        """Test that RSA 2048-bit key uses RS256 algorithm."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048, backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        assertion = provider.get_client_assertion()
+        assert assertion is not None
+        parts = assertion.split(".")
+        assert len(parts) == 3
+
+    def test_rsa_3072_uses_rs384_algorithm(self):
+        """Test that RSA 3072-bit key uses RS384 algorithm."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=3072, backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        assertion = provider.get_client_assertion()
+        assert assertion is not None
+        parts = assertion.split(".")
+        assert len(parts) == 3
+
+    def test_rsa_4096_uses_rs512_algorithm(self):
+        """Test that RSA 4096-bit key uses RS512 algorithm."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import rsa
+
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=4096, backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        assertion = provider.get_client_assertion()
+        assert assertion is not None
+        parts = assertion.split(".")
+        assert len(parts) == 3
+
+    def test_ec_secp256r1_uses_es256_algorithm(self):
+        """Test that EC secp256r1 curve uses ES256 algorithm."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import ec
+
+        private_key = ec.generate_private_key(ec.SECP256R1(), backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        assertion = provider.get_client_assertion()
+        assert assertion is not None
+        parts = assertion.split(".")
+        assert len(parts) == 3
+
+    def test_ec_secp384r1_uses_es384_algorithm(self):
+        """Test that EC secp384r1 curve uses ES384 algorithm."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import ec
+
+        private_key = ec.generate_private_key(ec.SECP384R1(), backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        assertion = provider.get_client_assertion()
+        assert assertion is not None
+        parts = assertion.split(".")
+        assert len(parts) == 3
+
+    def test_ec_secp521r1_uses_es512_algorithm(self):
+        """Test that EC secp521r1 curve uses ES512 algorithm."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import ec
+
+        private_key = ec.generate_private_key(ec.SECP521R1(), backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        assertion = provider.get_client_assertion()
+        assert assertion is not None
+        parts = assertion.split(".")
+        assert len(parts) == 3
+
+    def test_unsupported_ec_curve_raises_exception(self):
+        """Test that unsupported EC curve raises CredentialException."""
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric import ec
+
+        # Use secp192r1 which is not supported
+        private_key = ec.generate_private_key(ec.SECP192R1(), backend=default_backend())
+        pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        provider = StaticPrivateKeyAssertionProvider(pem.decode())
+        provider.client_id = "test_client_id"
+        provider.token_endpoint = "https://test.com/token"
+
+        with pytest.raises(CredentialException, match="Unsupported EC curve"):
+            provider.get_client_assertion()
